@@ -1,0 +1,2 @@
+# BESON - Binary Extended JSON #
+Beson library is an es6 compatible library that allows users to encode and transfer javascript data with binary format. Beson library is similar to BSON format used in mongodb. The major difference between beson and bson is that beson allows primitive data to be encoded directly. Beson is designed to transfer or store data in a binary format, not specialized for database storage.
