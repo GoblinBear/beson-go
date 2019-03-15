@@ -8,13 +8,13 @@ import (
 const UINT64_MAX uint64 = 18446744073709551615
 const UINT64_MAX_LENGTH int = 20
 
-type Uint128 struct {
+type UInt128 struct {
 	high uint64
 	low uint64
 }
 
-func NewUint128(value string) *Uint128 {
-	newValue := Uint128 {
+func NewUInt128(value string) *UInt128 {
+	newValue := UInt128 {
 		high: 0,
 		low: 0,
 	}
@@ -37,8 +37,8 @@ func NewUint128(value string) *Uint128 {
 	return &newValue
 }
 
-func (value *Uint128) Rshift(bits uint) *Uint128 {
-	newValue := Uint128 {
+func (value *UInt128) Rshift(bits uint) *UInt128 {
+	newValue := UInt128 {
 		high: value.high,
 		low: value.low,
 	}
@@ -46,8 +46,8 @@ func (value *Uint128) Rshift(bits uint) *Uint128 {
 	return &newValue
 }
 
-func (value *Uint128) Lshift(bits uint) *Uint128 {
-	newValue := Uint128 {
+func (value *UInt128) Lshift(bits uint) *UInt128 {
+	newValue := UInt128 {
 		high: value.high,
 		low: value.low,
 	}
@@ -55,7 +55,7 @@ func (value *Uint128) Lshift(bits uint) *Uint128 {
 	return &newValue
 }
 
-func (value *Uint128) decimalStringToBinaryString(str string) string {
+func (value *UInt128) decimalStringToBinaryString(str string) string {
 	var newString string
 	if (str == "0") {
 		newString = "0"
@@ -71,7 +71,7 @@ func (value *Uint128) decimalStringToBinaryString(str string) string {
 	return newString
 }
 
-func (value *Uint128) divideByTwo(str string) string {
+func (value *UInt128) divideByTwo(str string) string {
     newString := ""
 	newDigit := 0
 	add := 0
@@ -93,8 +93,8 @@ func (value *Uint128) divideByTwo(str string) string {
 	return newString
 }
 
-func (value *Uint128) ZERO() *Uint128 {
-	newValue := Uint128 {
+func (value *UInt128) ZERO() *UInt128 {
+	newValue := UInt128 {
 		high: 0,
 		low: 0,
 	}
@@ -102,8 +102,8 @@ func (value *Uint128) ZERO() *Uint128 {
 	return &newValue;
 }
 
-func (value *Uint128) MAX() *Uint128 {
-	newValue := Uint128 {
+func (value *UInt128) MAX() *UInt128 {
+	newValue := UInt128 {
 		high: 0xFFFFFFFFFFFFFFFF,
 		low: 0xFFFFFFFFFFFFFFFF,
 	}
@@ -111,7 +111,7 @@ func (value *Uint128) MAX() *Uint128 {
 	return &newValue;
 }
 
-func (value *Uint128) rightShiftUnsigned(val *Uint128, bits uint) {
+func (value *UInt128) rightShiftUnsigned(val *UInt128, bits uint) {
 	if (bits >= 128) {
 		val.high = 0
 		val.low = 0
@@ -131,7 +131,7 @@ func (value *Uint128) rightShiftUnsigned(val *Uint128, bits uint) {
 	val.high = 0;
 }
 
-func (value *Uint128) leftShift(val *Uint128, bits uint) {
+func (value *UInt128) leftShift(val *UInt128, bits uint) {
 	if (bits >= 128) {
 		val.high = 0
 		val.low = 0
@@ -151,7 +151,7 @@ func (value *Uint128) leftShift(val *Uint128, bits uint) {
 	val.low = 0;
 }
 
-func (value *Uint128) genMask(bits uint) uint64 {
+func (value *UInt128) genMask(bits uint) uint64 {
 	if (bits > 64) {
 		bits = 64
 	}
