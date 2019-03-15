@@ -1,11 +1,9 @@
 package types
 
 import (
-	//"encoding/binary"
 	"errors"
 	"fmt"
 	"bytes"
-	"reflect"
 	"regexp"
 	"strconv"
 )
@@ -17,10 +15,6 @@ type Binary struct {
 }
 
 func NewBinary(length int) *Binary {
-	if (reflect.TypeOf(length).String() != "int") {
-		return nil
-	}
-	
 	if (length < 0) {
 		return nil
 	}
@@ -158,7 +152,6 @@ func (bin *Binary) not(value *bytes.Buffer){
 	for off := 0; off < valueLength; off++ {
 		newBytes[off] = ^newBytes[off];
 	}
-	//bytesBuffer := bytes.NewBuffer(make([]byte, 0))
 	value.Write(newBytes)
 }
 
