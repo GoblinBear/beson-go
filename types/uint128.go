@@ -55,6 +55,24 @@ func (value *UInt128) Lshift(bits uint) *UInt128 {
 	return &newValue
 }
 
+func (value *UInt128) Not() *UInt128 {
+	newValue := UInt128 {
+		high: value.high,
+		low: value.low,
+	}
+	value.not(&newValue)
+	return &newValue
+}
+
+func (value *UInt128) Or(val *UInt128) *UInt128 {
+	newValue := UInt128 {
+		high: value.high,
+		low: value.low,
+	}
+	newValue.or(&newValue, val)
+	return &newValue
+}
+
 func (value *UInt128) decimalStringToBinaryString(str string) string {
 	var newString string
 	if (str == "0") {
@@ -109,6 +127,16 @@ func (value *UInt128) MAX() *UInt128 {
 	}
 
 	return &newValue;
+}
+
+func (value *UInt128) not(val *UInt128) {
+	val.high = (^val.high) >> 0
+	val.low = (^val.high) >> 0
+}
+
+func (value *UInt128) or(a *UInt128, b *UInt128) {
+	a.high = (a.high | b.high) >> 0
+	a.low = (a.low | b.low) >> 0
 }
 
 func (value *UInt128) rightShiftUnsigned(val *UInt128, bits uint) {
