@@ -155,7 +155,7 @@ func (bin *Binary) not(value *bytes.Buffer){
 	value.Write(newBytes)
 }
 
-func (bin *Binary) genMask(bits int) int {
+func (bin *Binary) genMask(bits uint) int {
 	if (bits > 8) {
 		return 0xFF;
 	}
