@@ -16,14 +16,18 @@ type UInt128 struct {
 	low uint64
 }
 
-func NewUInt128(value string) *UInt128 {
+func NewUInt128(s string) *UInt128 {
 	fmt.Println("....")
+	if len(s) == 0 {
+		return nil
+	}
+
 	newValue := UInt128 {
 		high: 0,
 		low: 0,
 	}
 
-	binaryString := decimalStringToBinaryString(value)
+	binaryString := decimalStringToBinaryString(s)
 	length := len(binaryString)
 	
 	if (length > 128) {

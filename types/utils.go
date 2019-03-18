@@ -151,16 +151,43 @@ func (value *UInt128) rightShiftUnsigned(val *UInt128, bits uint) {
 	}
 
 	if (bits < 64) {
-		mask := value.genMask(bits);
+		mask := genMask(bits)
 		shifted := (val.high & mask) >> 0
 		val.high = val.high >> bits
 		val.low = ((val.low >> bits) | (shifted << (64 - bits))) >> 0
 		return
 	}
 
-	bits = bits - 64;
+	bits = bits - 64
 	val.low = (val.high >> bits)
-	val.high = 0;
+	val.high = 0
+}
+
+func (value *Int128) RightShiftSigned(val *Int128, bits uint) {
+	if (bits >= 128) {
+		neg := isNegative(val)
+		if neg {
+			val.high = 1 << 63 - 1
+			val.low = 1 << 63 - 1
+		} else {
+			val.high = 0
+			val.low = 0
+		}
+		
+		return
+	}
+
+	if (bits < 64) {
+		mask := genMask(bits)
+		shifted := (val.high & int64(mask)) >> 0
+		val.high = val.high >> bits
+		val.low = ((val.low >> bits) | (shifted << (64 - bits))) >> 0
+		return
+	}
+
+	bits = bits - 64
+	val.low = (val.high >> bits)
+	val.high = (val.high >> 32 >> 32)
 }
 
 func (value *UInt128) leftShift(val *UInt128, bits uint) {
@@ -171,7 +198,7 @@ func (value *UInt128) leftShift(val *UInt128, bits uint) {
 	}
 	
 	if ( bits < 64 ) {
-		mask := (^value.genMask(64 - bits)) >> 0
+		mask := (^genMask(64 - bits)) >> 0
 		shifted := (val.low & mask) >> (64 - bits)
 		val.low = (val.low << bits) >> 0
 		val.high = (val.high << bits | shifted) >> 0
@@ -401,7 +428,7 @@ func (value *UInt128) paddingZero(data string, length int) string {
 	return padded + data;
 }
 
-func (value *UInt128) genMask(bits uint) uint64 {
+func genMask(bits uint) uint64 {
 	if (bits > 64) {
 		bits = 64
 	}

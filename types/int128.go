@@ -2,7 +2,6 @@ package types
 
 import (
 	"fmt"
-	"strconv"
 )
 
 type Int128 struct {
@@ -10,31 +9,46 @@ type Int128 struct {
 	low int64
 }
 
-func NewInt128(value string) *Int128 {
+func NewInt128(s string) *Int128 {
 	fmt.Println("....")
+	// Empty string bad.
+	if len(s) == 0 {
+		return nil
+	}
+
+	// Pick off leading sign.
+	neg := false
+	if s[0] == '+' {
+		s = s[1:]
+	} else if s[0] == '-' {
+		neg = true
+		s = s[1:]
+	}
+
+	// Convert unsigned.
+	un := NewUInt128(s)
+
 	newValue := Int128 {
 		high: 0,
 		low: 0,
 	}
 
-	binaryString := decimalStringToBinaryString(value)
-	length := len(binaryString)
-	
-	if (length > 128) {
-		return nil
+	if neg {
+		un.twosComplement(un)
+
+		high := int64(un.high)
+		low := int64(un.low)
+		newValue.high = int64(high)
+		newValue.low = int64(low)
+	} else {
+		high := int64(un.high)
+		low := int64(un.low)
+		newValue.high = int64(high)
+		newValue.low = int64(low)
 	}
 
-	if (length > 64) {
-		newValue.high, _ = strconv.ParseInt(binaryString[:length - 64], 2, 64)
-		newValue.low, _ = strconv.ParseInt(binaryString[length - 64:], 2, 64)
-	} else {
-		newValue.high = 0
-		newValue.low, _ = strconv.ParseInt(binaryString, 2, 64)
-	}
-	
 	return &newValue
 }
-
 
 func (value *Int128) IsNegative() bool {
 	return isNegative(value)
