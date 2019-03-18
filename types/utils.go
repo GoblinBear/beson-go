@@ -4,11 +4,13 @@ import (
 	//"bytes"
 	//"encoding/binary"
 	//"errors"
-	//"fmt"
+	"fmt"
+	//"reflect"
 	"strconv"
 )
 
 func decimalStringToBinaryString(str string) string {
+	fmt.Println(".....")
 	var newString string
 	if (str == "0") {
 		newString = "0"
@@ -46,23 +48,75 @@ func divideByTwo(str string) string {
 	return newString
 }
 
-func compare(a *UInt128, b *UInt128) int {
-	if (a.high < b.high) {
-		return -1
-	} else if (a.high > b.high) {
-		return 1
-	} else if (a.low < b.low) {
-		return -1
-	} else if (a.low > b.low) {
-		return 1
-	} else {
-		return 0
+func compare(x interface{}, y interface{}) int {
+	switch x.(type) {
+    case *UInt128:
+        a := x.(*UInt128)
+		b := y.(*UInt128)
+
+		if (a.high < b.high) {
+			return -1
+		} else if (a.high > b.high) {
+			return 1
+		} else if (a.low < b.low) {
+			return -1
+		} else if (a.low > b.low) {
+			return 1
+		} else {
+			return 0
+		}
+    case *Int128:
+        a := x.(*Int128)
+		b := y.(*Int128)
+
+		if (a.high < b.high) {
+			return -1
+		} else if (a.high > b.high) {
+			return 1
+		} else if (a.low < b.low) {
+			return -1
+		} else if (a.low > b.low) {
+			return 1
+		} else {
+			return 0
+		}
 	}
+	
+	return 0
 }
 
-func isZero(val *UInt128) bool {
-	return val.high == 0 && val.low == 0
+// func compare(a *UInt128, b *UInt128) int {
+// 	if (a.high < b.high) {
+// 		return -1
+// 	} else if (a.high > b.high) {
+// 		return 1
+// 	} else if (a.low < b.low) {
+// 		return -1
+// 	} else if (a.low > b.low) {
+// 		return 1
+// 	} else {
+// 		return 0
+// 	}
+// }
+
+func isZero(x interface{}) bool {
+	switch x.(type) {
+    case *UInt128:
+		val := x.(*UInt128)
+
+		return val.high == 0 && val.low == 0
+    case *Int128:
+		val := x.(*Int128)
+		
+		return val.high == 0 && val.low == 0
+	}
+	
+	return true
 }
+
+// func isZero(val *UInt128) bool {
+// 	return val.high == 0 && val.low == 0
+// }
 
 func isNegative(val *Int128) bool {
 	return (val.high & -0x8000000000000000) != 0

@@ -8,7 +8,7 @@ import (
 	"strconv"
 )
 
-const UINT64_MAX uint64 = 1 << 64 -1
+const UINT64_MAX uint64 = 1 << 64 - 1
 const UINT64_MAX_LENGTH int = 20
 
 type UInt128 struct {
