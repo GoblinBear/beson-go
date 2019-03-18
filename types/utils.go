@@ -101,11 +101,11 @@ func compare(x interface{}, y interface{}) int {
 
 func isZero(x interface{}) bool {
 	switch x.(type) {
-    case *UInt128:
+	case *UInt128:
 		val := x.(*UInt128)
 
 		return val.high == 0 && val.low == 0
-    case *Int128:
+	case *Int128:
 		val := x.(*Int128)
 		
 		return val.high == 0 && val.low == 0
