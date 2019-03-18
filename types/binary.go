@@ -15,6 +15,7 @@ type Binary struct {
 }
 
 func NewBinary(length int) *Binary {
+	fmt.Println("....b")
 	if (length < 0) {
 		return nil
 	}
@@ -85,7 +86,6 @@ func (bin *Binary) ToString(base int) (string, error) {
 	default:
 		return "", errors.New("Only accepts 2 and 16 representations.")
 	}
-	fmt.Println("")
 	return "", nil
 }
 

@@ -1,11 +1,14 @@
 package types
 
 import (
-	//"fmt"
+	"bytes"
+	"encoding/binary"
+	"errors"
+	"fmt"
 	"strconv"
 )
 
-const UINT64_MAX uint64 = 18446744073709551615
+const UINT64_MAX uint64 = 1 << 64 -1
 const UINT64_MAX_LENGTH int = 20
 
 type UInt128 struct {
@@ -14,12 +17,13 @@ type UInt128 struct {
 }
 
 func NewUInt128(value string) *UInt128 {
+	fmt.Println("....")
 	newValue := UInt128 {
 		high: 0,
 		low: 0,
 	}
 
-	binaryString := newValue.decimalStringToBinaryString(value)
+	binaryString := decimalStringToBinaryString(value)
 	length := len(binaryString)
 	
 	if (length > 128) {
@@ -73,42 +77,122 @@ func (value *UInt128) Or(val *UInt128) *UInt128 {
 	return &newValue
 }
 
-func (value *UInt128) decimalStringToBinaryString(str string) string {
-	var newString string
-	if (str == "0") {
-		newString = "0"
-	} else {
-		newString = ""
-		for (str != "0") {
-			lastChar := str[len(str) - 1]
-			remainder := (int(lastChar) - int('0')) % 2
-			newString = strconv.Itoa(remainder) + newString
-			str = value.divideByTwo(str)
-		}
+func (value *UInt128) And(val *UInt128) *UInt128 {
+	newValue := UInt128 {
+		high: value.high,
+		low: value.low,
 	}
-	return newString
+	newValue.and(&newValue, val)
+	return &newValue
 }
 
-func (value *UInt128) divideByTwo(str string) string {
-    newString := ""
-	newDigit := 0
-	add := 0
-
-	for _, ch := range str {
-        newDigit = (int(ch) - int('0')) / 2 + add
-        newString = newString + strconv.Itoa(newDigit)
-		if ((int(ch) - int('0')) % 2 == 1) {
-			add = 5
-		} else {
-			add = 0
-		}
+func (value *UInt128) Xor(val *UInt128) *UInt128 {
+	newValue := UInt128 {
+		high: value.high,
+		low: value.low,
 	}
+	newValue.xor(&newValue, val)
+	return &newValue
+}
 
-    if (string(newString) != "0" && newString[0:1] == "0") {
-		newString = newString[1:]
+func (value *UInt128) Add(val *UInt128) *UInt128 {
+	newValue := UInt128 {
+		high: value.high,
+		low: value.low,
 	}
+	newValue.add(&newValue, val)
+	return &newValue
+}
 
-	return newString
+func (value *UInt128) Sub(val *UInt128) *UInt128 {
+	newValue := UInt128 {
+		high: value.high,
+		low: value.low,
+	}
+	newValue.sub(&newValue, val)
+	return &newValue
+}
+
+func (value *UInt128) Multiply(val *UInt128) *UInt128 {
+	newValue := UInt128 {
+		high: value.high,
+		low: value.low,
+	}
+	newValue.multiply(&newValue, val)
+	return &newValue
+}
+
+func (value *UInt128) Divide(val *UInt128) *UInt128 {
+	newValue := UInt128 {
+		high: value.high,
+		low: value.low,
+	}
+	newValue.divide(&newValue, val)
+	return &newValue
+}
+
+func (value *UInt128) Modulo(val *UInt128) *UInt128 {
+	newValue := UInt128 {
+		high: value.high,
+		low: value.low,
+	}
+	ans := newValue.divide(&newValue, val)
+	return ans
+}
+
+func (value *UInt128) Compare(val *UInt128) int {
+	return compare(value, val)
+}
+
+func (value *UInt128) IsZero() bool {
+	return isZero(value)
+}
+
+func (value *UInt128) ToString(base int) (string, error) {
+	switch base {
+	case 2:
+		return value.toBinaryString(value), nil
+	case 10:
+		return value.ToDecimalString(value), nil // TODO
+	case 16:
+		return value.toHexString(value), nil
+	default:
+		return "", errors.New("Only accepts 2 and 16 representations.")
+	}
+	return "", nil
+}
+
+func (value *UInt128) ToBytes() *bytes.Buffer {
+	bytesBuffer := bytes.NewBuffer(make([]byte, 0))
+	binary.Write(bytesBuffer, binary.BigEndian, value)
+
+	return bytesBuffer
+}
+
+func (value *UInt128) IsSigned() bool {
+	return false
+}
+
+func (value *UInt128) SetValue(str string) {
+	newValue := NewUInt128(str)
+	value.high = newValue.high
+	value.low = newValue.low
+}
+
+func (value *UInt128) High() uint64 {
+	return value.high
+}
+
+func (value *UInt128) SetHigh(high uint64) {
+	value.high = high
+}
+
+func (value *UInt128) Low() uint64 {
+	return value.low
+}
+
+func (value *UInt128) SetLow(low uint64) {
+	value.low = low
 }
 
 func (value *UInt128) ZERO() *UInt128 {
@@ -127,70 +211,4 @@ func (value *UInt128) MAX() *UInt128 {
 	}
 
 	return &newValue;
-}
-
-func (value *UInt128) not(val *UInt128) {
-	val.high = (^val.high) >> 0
-	val.low = (^val.high) >> 0
-}
-
-func (value *UInt128) or(a *UInt128, b *UInt128) {
-	a.high = (a.high | b.high) >> 0
-	a.low = (a.low | b.low) >> 0
-}
-
-func (value *UInt128) rightShiftUnsigned(val *UInt128, bits uint) {
-	if (bits >= 128) {
-		val.high = 0
-		val.low = 0
-		return
-	}
-
-	if (bits < 64) {
-		mask := value.genMask(bits);
-		shifted := (val.high & mask) >> 0
-		val.high = val.high >> bits
-		val.low = ((val.low >> bits) | (shifted << (64 - bits))) >> 0
-		return
-	}
-
-	bits = bits - 64;
-	val.low = (val.high >> bits)
-	val.high = 0;
-}
-
-func (value *UInt128) leftShift(val *UInt128, bits uint) {
-	if (bits >= 128) {
-		val.high = 0
-		val.low = 0
-		return
-	}
-	
-	if ( bits < 64 ) {
-		mask := (^value.genMask(64 - bits)) >> 0
-		shifted := (val.low & mask) >> (64 - bits)
-		val.low = (val.low << bits) >> 0
-		val.high = (val.high << bits | shifted) >> 0
-		return
-	}
-	
-	bits = bits - 64
-	val.high = (val.low << bits) >> 0
-	val.low = 0;
-}
-
-func (value *UInt128) genMask(bits uint) uint64 {
-	if (bits > 64) {
-		bits = 64
-	}
-	if (bits < 0) {
-		bits = 0
-	}
-
-	var val uint64 = 0
-	for (bits > 0) {
-		val = ((val << 1) | 1) >> 0
-		bits--
-	}
-	return val;
 }
