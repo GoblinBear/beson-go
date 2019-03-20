@@ -4,44 +4,58 @@ import (
 	"bytes"
 	"encoding/binary"
 	"errors"
-	"fmt"
 	"strconv"
 )
 
 const UINT64_MAX uint64 = 1 << 64 - 1
-const UINT64_MAX_LENGTH int = 20
+const DECIMAL_STEPPER uint64 = 10000000000000000000
+const DECIMAL_STEPPER_LEN int = 19
 
 type UInt128 struct {
 	high uint64
 	low uint64
 }
 
+// TODO: base = 2 / 10 / 16
 func NewUInt128(s string) *UInt128 {
-	fmt.Println("....")
 	if len(s) == 0 {
 		return nil
 	}
 
+	remain := s
 	newValue := UInt128 {
 		high: 0,
 		low: 0,
 	}
-
-	binaryString := decimalStringToBinaryString(s)
-	length := len(binaryString)
-	
-	if (length > 128) {
-		return nil
+	stepper := UInt128 {
+		high: 0,
+		low: DECIMAL_STEPPER,
+	}
+	pow := UInt128 {
+		high: 0,
+		low: 1,
 	}
 
-	if (length > 64) {
-		newValue.high, _ = strconv.ParseUint(binaryString[:length - 64], 2, 64)
-		newValue.low, _ = strconv.ParseUint(binaryString[length - 64:], 2, 64)
-	} else {
-		newValue.high = 0
-		newValue.low, _ = strconv.ParseUint(binaryString, 2, 64)
+	cutoff := 0
+	for remain != "" {
+		if len(remain) < DECIMAL_STEPPER_LEN {
+			cutoff = len(remain)
+		} else {
+			cutoff = DECIMAL_STEPPER_LEN
+		}
+
+		low, _ := strconv.ParseUint(remain[len(remain) - cutoff:], 10, 64)
+		add := UInt128 {
+			high: 0,
+			low: low,
+		}
+		newValue.multiply(&add, &pow)
+		newValue.add(&newValue, &add)
+
+		remain = remain[:len(remain) - cutoff]
+		newValue.multiply(&pow, &stepper)
 	}
-	
+
 	return &newValue
 }
 
@@ -145,11 +159,11 @@ func (value *UInt128) Modulo(val *UInt128) *UInt128 {
 }
 
 func (value *UInt128) Compare(val *UInt128) int {
-	return compare(value, val)
+	return value.compare(value, val)
 }
 
 func (value *UInt128) IsZero() bool {
-	return isZero(value)
+	return value.isZero(value)
 }
 
 func (value *UInt128) ToString(base int) (string, error) {
@@ -157,7 +171,7 @@ func (value *UInt128) ToString(base int) (string, error) {
 	case 2:
 		return value.toBinaryString(value), nil
 	case 10:
-		return value.ToDecimalString(value), nil // TODO
+		return value.toDecimalString(value), nil
 	case 16:
 		return value.toHexString(value), nil
 	default:

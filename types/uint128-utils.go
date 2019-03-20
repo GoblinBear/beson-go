@@ -1,16 +1,10 @@
 package types
 
 import (
-	//"bytes"
-	//"encoding/binary"
-	//"errors"
-	"fmt"
-	//"reflect"
 	"strconv"
 )
 
 func decimalStringToBinaryString(str string) string {
-	fmt.Println(".....")
 	var newString string
 	if (str == "0") {
 		newString = "0"
@@ -48,80 +42,23 @@ func divideByTwo(str string) string {
 	return newString
 }
 
-func compare(x interface{}, y interface{}) int {
-	switch x.(type) {
-    case *UInt128:
-        a := x.(*UInt128)
-		b := y.(*UInt128)
-
-		if (a.high < b.high) {
-			return -1
-		} else if (a.high > b.high) {
-			return 1
-		} else if (a.low < b.low) {
-			return -1
-		} else if (a.low > b.low) {
-			return 1
-		} else {
-			return 0
-		}
-    case *Int128:
-        a := x.(*Int128)
-		b := y.(*Int128)
-
-		if (a.high < b.high) {
-			return -1
-		} else if (a.high > b.high) {
-			return 1
-		} else if (a.low < b.low) {
-			return -1
-		} else if (a.low > b.low) {
-			return 1
-		} else {
-			return 0
-		}
+func (value *UInt128) compare(a *UInt128, b *UInt128) int {
+	if (a.high < b.high) {
+		return -1
+	} else if (a.high > b.high) {
+		return 1
+	} else if (a.low < b.low) {
+		return -1
+	} else if (a.low > b.low) {
+		return 1
+	} else {
+		return 0
 	}
-	
-	return 0
 }
 
-// func compare(a *UInt128, b *UInt128) int {
-// 	if (a.high < b.high) {
-// 		return -1
-// 	} else if (a.high > b.high) {
-// 		return 1
-// 	} else if (a.low < b.low) {
-// 		return -1
-// 	} else if (a.low > b.low) {
-// 		return 1
-// 	} else {
-// 		return 0
-// 	}
-// }
-
-func isZero(x interface{}) bool {
-	switch x.(type) {
-	case *UInt128:
-		val := x.(*UInt128)
-
-		return val.high == 0 && val.low == 0
-	case *Int128:
-		val := x.(*Int128)
-		
-		return val.high == 0 && val.low == 0
-	}
-	
-	return true
+func (value *UInt128) isZero(val *UInt128) bool {
+	return val.high == 0 && val.low == 0
 }
-
-// func isZero(val *UInt128) bool {
-// 	return val.high == 0 && val.low == 0
-// }
-
-func isNegative(val *Int128) bool {
-	return (val.high & -0x8000000000000000) != 0
-}
-
 
 func (value *UInt128) not(val *UInt128) {
 	val.high = (^val.high) >> 0
@@ -161,33 +98,6 @@ func (value *UInt128) rightShiftUnsigned(val *UInt128, bits uint) {
 	bits = bits - 64
 	val.low = (val.high >> bits)
 	val.high = 0
-}
-
-func (value *Int128) RightShiftSigned(val *Int128, bits uint) {
-	if (bits >= 128) {
-		neg := isNegative(val)
-		if neg {
-			val.high = 1 << 63 - 1
-			val.low = 1 << 63 - 1
-		} else {
-			val.high = 0
-			val.low = 0
-		}
-		
-		return
-	}
-
-	if (bits < 64) {
-		mask := genMask(bits)
-		shifted := (val.high & int64(mask)) >> 0
-		val.high = val.high >> bits
-		val.low = ((val.low >> bits) | (shifted << (64 - bits))) >> 0
-		return
-	}
-
-	bits = bits - 64
-	val.low = (val.high >> bits)
-	val.high = (val.high >> 32 >> 32)
 }
 
 func (value *UInt128) leftShift(val *UInt128, bits uint) {
@@ -234,6 +144,10 @@ func (value *UInt128) sub(a *UInt128, b *UInt128) {
 }
 
 func (value *UInt128) multiply(a *UInt128, b *UInt128) {
+	multiplier := UInt128 {
+		high: b.high,
+		low: b.low,
+	}
 	ans := UInt128 {
 		high: 0,
 		low: 0,
@@ -242,13 +156,13 @@ func (value *UInt128) multiply(a *UInt128, b *UInt128) {
 	bits := value.nbits(b)
 
 	for i := 0; i < bits; i++ {
-		if (b.low & 1 == 1) {
+		if (multiplier.low & 1 == 1) {
 			value.add(&ans, a)
 		}
 		value.leftShift(a, 1)
-		value.rightShiftUnsigned(b, 1)
+		value.rightShiftUnsigned(&multiplier, 1)
 	}
-
+	
 	a.high = ans.high
 	a.low = ans.low
 }
@@ -267,13 +181,15 @@ func (value *UInt128) divide(a *UInt128, b *UInt128) *UInt128 {
 		low: b.low,
 	}
 
-	if (isZero(b)) {
+	if (value.isZero(b)) {
 		return nil
 	}
-	if (compare(a, b) < 0) {
+	if (value.compare(a, b) < 0) {
+		remainder.high = a.high
+		remainder.low = a.low
 		a.high = 0
 		a.low = 0
-		return &quotient
+		return &remainder
 	}
 
 	var mask uint64 = 0x8000000000000000
@@ -310,7 +226,7 @@ func (value *UInt128) divide(a *UInt128, b *UInt128) *UInt128 {
 	for (count > 0) {
 		count--
 
-		if (compare(&remainder, &divider) >= 0) {
+		if (value.compare(&remainder, &divider) >= 0) {
 			value.sub(&remainder, &divider)
 			quotient.low = quotient.low | 1
 		}
@@ -369,7 +285,7 @@ func (value *UInt128) toBinaryString(val *UInt128) string {
 	}
 
 	strHigh := strconv.FormatUint(val.high, 2)
-	str := strHigh + value.paddingZero(strLow, 64);
+	str := strHigh + paddingZero(strLow, 64);
 
 	return str
 }
@@ -381,35 +297,38 @@ func (value *UInt128) toHexString(val *UInt128) string {
 	}
 
 	strHigh := strconv.FormatUint(val.high, 16)
-	str := strHigh + value.paddingZero(strLow, 16);
+	str := strHigh + paddingZero(strLow, 16);
 
 	return str
 }
 
-// TODO: uncomplete
-func (value *UInt128) ToDecimalString(val *UInt128) string {
+func (value *UInt128) toDecimalString(val *UInt128) string {
 	var output []string
 
+	stepper := UInt128 {
+		high: 0,
+		low: DECIMAL_STEPPER,
+	}
+	
 	quotient := UInt128 {
 		high: val.high,
 		low: val.low,
 	}
-	
-	var slc []string
-	div := NewUInt128("1844674407370955161")
 
-	for (!isZero(&quotient)) {
-		slc = append(slc, strconv.FormatUint(quotient.low, 10))
+	for (!value.isZero(&quotient)) {
+		remain := value.divide(&quotient, &stepper)
+		var slc []string
+		slc = append(slc, strconv.FormatUint(remain.low, 10))
 		output = append(slc, output...)
-		value.divide(&quotient, div)
+		
 	}
-	
-	if ( len(output) == 0 ) {
+
+	if (len(output) == 0) {
 		return "0"
 	} else {
-		x := ""
-		for _, comp := range output {
-			x = x + value.paddingZero(comp, 9)
+		x := output[0]
+		for _, comp := range output[1:] {
+			x = x + paddingZero(comp, DECIMAL_STEPPER_LEN)
 		}
 		
 		return x
@@ -417,7 +336,7 @@ func (value *UInt128) ToDecimalString(val *UInt128) string {
 	return "0"
 }
 
-func (value *UInt128) paddingZero(data string, length int) string {
+func paddingZero(data string, length int) string {
 	zeros := length - len(data)
 	padded := ""
 	for (zeros > 0) {

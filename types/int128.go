@@ -4,6 +4,10 @@ import (
 	"fmt"
 )
 
+const INT64_MAX int64 = 1 << 63 - 1
+const DECIMAL_STEPPER_INT64 int64 = 1000000000000000000 // TODO
+const DECIMAL_STEPPER_INT64_LEN int = 18
+
 type Int128 struct {
 	high int64
 	low int64
@@ -51,5 +55,5 @@ func NewInt128(s string) *Int128 {
 }
 
 func (value *Int128) IsNegative() bool {
-	return isNegative(value)
+	return value.isNegative(value)
 }
