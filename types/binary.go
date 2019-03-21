@@ -2,7 +2,6 @@ package types
 
 import (
     "errors"
-    "fmt"
     "bytes"
 )
 
@@ -13,7 +12,6 @@ type Binary struct {
 }
 
 func NewBinary(length int) *Binary {
-    fmt.Println("....b")
     if length < 0 {
         return nil
     }
@@ -66,9 +64,29 @@ func (bin *Binary) Resize(length int) *Binary {
     return bin
 }
 
+func (bin *Binary) LeftShift(bits uint, padding uint8) *Binary {
+    bin.leftShift(bin.buf, bits, padding);
+    return bin
+}
+
+func (bin *Binary) RightShift(bits uint, padding uint8) *Binary {
+    bin.rightShift(bin.buf, bits, padding);
+    return bin
+}
+
 func (bin *Binary) Not() *Binary {
-    bin.not(bin.buf);
-    return bin;
+    bin.not(bin.buf)
+    return bin
+}
+
+func (bin *Binary) Compare(value *Binary, align bool) int {
+    newBytes := make([]byte, value.buf.Len())
+    value.buf.Read(newBytes)
+    
+    bytesBuffer := bytes.NewBuffer(make([]byte, 0))
+    bytesBuffer.Write(newBytes)
+    
+    return bin.compare(bin.buf, bytesBuffer, align)
 }
 
 func (bin *Binary) ToBytes() *bytes.Buffer {
@@ -93,7 +111,7 @@ func (bin *Binary) From(segments ...*Binary) *Binary {
 }
 
 func (bin *Binary) FromHex(hexString string) *Binary {
-    if hexString[0:2] != "0x" {
+    if len(hexString) < 2 || hexString[0:2] != "0x" {
         hexString = "0x" + hexString
     }
     bytesBuffer := bin.bufferFromHex(hexString)
