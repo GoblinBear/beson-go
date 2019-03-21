@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"encoding/binary"
 	"errors"
-	"strconv"
 )
 
 const UINT64_MAX uint64 = 1 << 64 - 1
@@ -16,47 +15,19 @@ type UInt128 struct {
 	low uint64
 }
 
-// TODO: base = 2 / 10 / 16
-func NewUInt128(s string) *UInt128 {
-	if len(s) == 0 {
-		return nil
+func NewUInt128(s string, base int) *UInt128 {
+	switch base {
+	case 2:
+		return parseBinaryToUint(s)
+	case 10:
+		return parseDecimalToUint(s)
+	case 16:
+		return parseHexToUint(s)
+	default:
+		return parseDecimalToUint(s)
 	}
 
-	remain := s
-	newValue := UInt128 {
-		high: 0,
-		low: 0,
-	}
-	stepper := UInt128 {
-		high: 0,
-		low: DECIMAL_STEPPER,
-	}
-	pow := UInt128 {
-		high: 0,
-		low: 1,
-	}
-
-	cutoff := 0
-	for remain != "" {
-		if len(remain) < DECIMAL_STEPPER_LEN {
-			cutoff = len(remain)
-		} else {
-			cutoff = DECIMAL_STEPPER_LEN
-		}
-
-		low, _ := strconv.ParseUint(remain[len(remain) - cutoff:], 10, 64)
-		add := UInt128 {
-			high: 0,
-			low: low,
-		}
-		newValue.multiply(&add, &pow)
-		newValue.add(&newValue, &add)
-
-		remain = remain[:len(remain) - cutoff]
-		newValue.multiply(&pow, &stepper)
-	}
-
-	return &newValue
+	return parseDecimalToUint(s)
 }
 
 func (value *UInt128) Rshift(bits uint) *UInt128 {
@@ -191,8 +162,8 @@ func (value *UInt128) IsSigned() bool {
 	return false
 }
 
-func (value *UInt128) SetValue(str string) {
-	newValue := NewUInt128(str)
+func (value *UInt128) SetValue(str string, base int) {
+	newValue := NewUInt128(str, base)
 	value.high = newValue.high
 	value.low = newValue.low
 }

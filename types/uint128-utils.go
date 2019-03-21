@@ -4,6 +4,120 @@ import (
 	"strconv"
 )
 
+func parseBinaryToUint(s string) *UInt128 {
+	if len(s) == 0 {
+		return nil
+	}
+	if len(s) > 128 {
+		return nil
+	}
+
+	if len(s) <= 64 {
+		low, err := strconv.ParseUint(s, 2, 64)
+		if err != nil {
+			return nil
+		}
+		newValue := UInt128 {
+			high: 0,
+			low: low,
+		}
+		return &newValue
+	}
+
+	low, err1 := strconv.ParseUint(s[len(s) - 64:], 2, 64)
+	if err1 != nil {
+		return nil
+	}
+	high, err2 := strconv.ParseUint(s[:len(s) - 64], 2, 64)
+	if err2 != nil {
+		return nil
+	}
+
+	newValue := UInt128 {
+		high: high,
+		low: low,
+	}
+	return &newValue
+}
+
+func parseDecimalToUint(s string) *UInt128 {
+	if len(s) == 0 {
+		return nil
+	}
+
+	remain := s
+	newValue := UInt128 {
+		high: 0,
+		low: 0,
+	}
+	stepper := UInt128 {
+		high: 0,
+		low: DECIMAL_STEPPER,
+	}
+	pow := UInt128 {
+		high: 0,
+		low: 1,
+	}
+
+	cutoff := 0
+	for remain != "" {
+		if len(remain) < DECIMAL_STEPPER_LEN {
+			cutoff = len(remain)
+		} else {
+			cutoff = DECIMAL_STEPPER_LEN
+		}
+
+		low, _ := strconv.ParseUint(remain[len(remain) - cutoff:], 10, 64)
+		add := UInt128 {
+			high: 0,
+			low: low,
+		}
+		newValue.multiply(&add, &pow)
+		newValue.add(&newValue, &add)
+
+		remain = remain[:len(remain) - cutoff]
+		newValue.multiply(&pow, &stepper)
+	}
+
+	return &newValue
+}
+
+func parseHexToUint(s string) *UInt128 {
+	if len(s) == 0 {
+		return nil
+	}
+	if len(s) > 32 {
+		return nil
+	}
+
+	if len(s) <= 16 {
+		low, err := strconv.ParseUint(s, 16, 64)
+		if err != nil {
+			return nil
+		}
+		newValue := UInt128 {
+			high: 0,
+			low: low,
+		}
+		return &newValue
+	}
+
+	low, err1 := strconv.ParseUint(s[len(s) - 16:], 16, 64)
+	if err1 != nil {
+		return nil
+	}
+	high, err2 := strconv.ParseUint(s[:len(s) - 16], 16, 64)
+	if err2 != nil {
+		return nil
+	}
+
+	newValue := UInt128 {
+		high: high,
+		low: low,
+	}
+	return &newValue
+}
+
 func decimalStringToBinaryString(str string) string {
 	var newString string
 	if (str == "0") {

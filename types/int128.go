@@ -13,7 +13,7 @@ type Int128 struct {
 	low int64
 }
 
-func NewInt128(s string) *Int128 {
+func NewInt128(s string, base int) *Int128 {
 	fmt.Println("....")
 	// Empty string bad.
 	if len(s) == 0 {
@@ -30,7 +30,7 @@ func NewInt128(s string) *Int128 {
 	}
 
 	// Convert unsigned.
-	un := NewUInt128(s)
+	un := NewUInt128(s, base)
 
 	newValue := Int128 {
 		high: 0,
