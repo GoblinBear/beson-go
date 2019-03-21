@@ -6,13 +6,13 @@ import (
 )
 
 func (value *Int128) compare(a *Int128, b *Int128) int {
-	if (a.high < b.high) {
+	if a.high < b.high {
 		return -1
-	} else if (a.high > b.high) {
+	} else if a.high > b.high {
 		return 1
-	} else if (a.low < b.low) {
+	} else if a.low < b.low {
 		return -1
-	} else if (a.low > b.low) {
+	} else if a.low > b.low {
 		return 1
 	} else {
 		return 0
@@ -49,13 +49,13 @@ func (value *Int128) xor(a *Int128, b *Int128) {
 }
 
 func (value *Int128) rightShiftUnsigned(val *Int128, bits uint) {
-	if (bits >= 128) {
+	if bits >= 128 {
 		val.high = 0
 		val.low = 0
 		return
 	}
 
-	if (bits < 64) {
+	if bits < 64 {
 		mask := genMask(bits)
 		shifted := (val.high & int64(mask)) >> 0
 		val.high = val.high >> bits
@@ -69,7 +69,7 @@ func (value *Int128) rightShiftUnsigned(val *Int128, bits uint) {
 }
 
 func (value *Int128) rightShiftSigned(val *Int128, bits uint) {
-	if (bits >= 128) {
+	if bits >= 128 {
 		neg := value.isNegative(val)
 		if neg {
 			val.high = 1 << 63 - 1
@@ -82,7 +82,7 @@ func (value *Int128) rightShiftSigned(val *Int128, bits uint) {
 		return
 	}
 
-	if (bits < 64) {
+	if bits < 64 {
 		mask := genMask(bits)
 		shifted := (val.high & int64(mask)) >> 0
 		val.high = val.high >> bits
@@ -96,13 +96,13 @@ func (value *Int128) rightShiftSigned(val *Int128, bits uint) {
 }
 
 func (value *Int128) leftShift(val *Int128, bits uint) {
-	if (bits >= 128) {
+	if bits >= 128 {
 		val.high = 0
 		val.low = 0
 		return
 	}
 	
-	if ( bits < 64 ) {
+	if bits < 64 {
 		mask := (^genMask(64 - bits)) >> 0
 		shifted := (val.low & int64(mask)) >> (64 - bits)
 		val.low = (val.low << bits) >> 0
@@ -118,7 +118,7 @@ func (value *Int128) leftShift(val *Int128, bits uint) {
 func (value *Int128) add(a *Int128, b *Int128) {
 	var carry int64 = 0
 	low := a.low + b.low
-	if (a.low > INT64_MAX - b.low) {
+	if a.low > INT64_MAX - b.low {
 		carry = 1
 	}
 
@@ -154,15 +154,15 @@ func (value *Int128) nbits(val *Int128) int {
 	high := val.high
 	low := val.low
 
-	if (high == 0) {
-		for (low > 0) {
+	if high == 0 {
+		for low > 0 {
 			low = low >> 1
 			bits++
 		}
 		return bits
 	}
 
-	for (high > 0) {
+	for high > 0 {
 		high = high >> 1
 		bits++
 	}
@@ -176,7 +176,7 @@ func (value *Int128) twosComplement(val *Int128) {
 
 	var carry int64 = 0
 	low := val.low + 1
-	if (val.low > INT64_MAX - 1) {  //TODO: INT64_MAX ?
+	if val.low > INT64_MAX - 1 {  //TODO: INT64_MAX ?
 		carry = 1
 	}
 
@@ -188,7 +188,7 @@ func (value *Int128) twosComplement(val *Int128) {
 
 func (value *Int128) toBinaryString(val *Int128) string {
 	strLow := strconv.FormatInt(val.low, 2)
-	if (val.high == 0) {
+	if val.high == 0 {
 		return strLow
 	}
 
@@ -200,7 +200,7 @@ func (value *Int128) toBinaryString(val *Int128) string {
 
 func (value *Int128) toHexString(val *Int128) string {
 	strLow := strconv.FormatInt(val.low, 16)
-	if (val.high == 0) {
+	if val.high == 0 {
 		return strLow
 	}
 
@@ -225,7 +225,7 @@ func (value *Int128) toDecimalString(val *Int128) string {
 		low: val.low,
 	}
 
-	for (!value.isZero(&quotient)) {
+	for !value.isZero(&quotient) {
 		remain := value.divide(&quotient, &stepper)
 		var slc []string
 		slc = append(slc, strconv.FormatInt(remain.low, 10))
@@ -233,7 +233,7 @@ func (value *Int128) toDecimalString(val *Int128) string {
 		
 	}
 
-	if (len(output) == 0) {
+	if len(output) == 0 {
 		return "0"
 	} else {
 		x := output[0]
