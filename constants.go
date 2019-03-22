@@ -1,11 +1,10 @@
 package beson
 
 import (
-    //"fmt"
     "bytes"
 )
 
-var dataType = map[string]string {
+var DATA_TYPE = map[string]string {
     "NULL":             "null",
     "FALSE":            "false",
     "TRUE":             "true",
@@ -50,7 +49,7 @@ var dataType = map[string]string {
     "SPECIAL_BUFFER":   "special_buffer",
 }
 
-var typeHeader = map[string][2]uint8 {
+var TYPE_HEADER = map[string][]uint8 {
     "NULL":             { 0x00, 0x00 },
     "FALSE":            { 0x01, 0x00 },
     "TRUE":             { 0x01, 0x01 },
@@ -95,10 +94,10 @@ var typeHeader = map[string][2]uint8 {
     "SPECIAL_BUFFER":   { 0x0f, 0xff },
 }
 
-func TypeHeader(str string) []bytes.Buffer {
+func getBufferList (str string) []bytes.Buffer {
     var header []bytes.Buffer
 
-    for _, t := range typeHeader[str] {
+    for _, t := range TYPE_HEADER[str] {
         var buf bytes.Buffer
         buf.WriteByte(byte(t))
         header = append(header, buf)
