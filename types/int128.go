@@ -53,6 +53,28 @@ func NewInt128(s string, base int) RootType {
     return newValue
 }
 
+func ToInt128(value interface{}) RootType {
+    var low uint64
+    switch value.(type) {
+    case int8:
+        low = uint64(value.(int8))
+    case int16:
+        low = uint64(value.(int16))
+    case int32:
+        low = uint64(value.(int32))
+    case int64:
+        low = uint64(value.(int64))
+    default:
+        return nil
+    }
+
+    newValue := &Int128 {
+        high: 0,
+        low: low,
+    }
+    return newValue
+}
+
 func (value *Int128) Rshift(bits uint) *Int128 {
     newValue := &Int128 {
         high: value.high,

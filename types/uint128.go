@@ -30,6 +30,28 @@ func NewUInt128(s string, base int) RootType {
     return parseDecimalToUint(s)
 }
 
+func ToUInt128(value interface{}) RootType {
+    var low uint64
+    switch value.(type) {
+    case uint8:
+        low = uint64(value.(uint8))
+    case uint16:
+        low = uint64(value.(uint16))
+    case uint32:
+        low = uint64(value.(uint32))
+    case uint64:
+        low = value.(uint64)
+    default:
+        return nil
+    }
+
+    newValue := &UInt128 {
+        high: 0,
+        low: low,
+    }
+    return newValue
+}
+
 func (value *UInt128) Rshift(bits uint) *UInt128 {
     newValue := &UInt128 {
         high: value.high,
