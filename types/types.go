@@ -53,7 +53,7 @@ type Bool struct {
 }
 
 type String struct {
-    value string
+    str string
 }
 
 type Slice struct {
@@ -121,4 +121,63 @@ func NewSlice(value []RootType) RootType {
 
 func NewMap(value map[RootType]RootType) RootType {
     return &Map { value }
+}
+
+
+/* Get value */
+
+func (value *UInt8) Get() uint8 {
+    return value.value
+}
+
+func (value *UInt16) Get() uint16 {
+    return value.value
+}
+
+func (value *UInt32) Get() uint32 {
+    return value.value
+}
+
+func (value *UInt64) Get() uint64 {
+    return value.value
+}
+
+func (value *Int8) Get() int8 {
+    return value.value
+}
+
+func (value *Int16) Get() int16 {
+    return value.value
+}
+
+func (value *Int32) Get() int32 {
+    return value.value
+}
+
+func (value *Int64) Get() int64 {
+    return value.value
+}
+
+func (value *Float32) Get() float32 {
+    return value.value
+}
+
+func (value *Float64) Get() float64 {
+    return value.value
+}
+
+func (value *Bool) Get() bool {
+    return value.value
+}
+
+func (value *String) Get() string {
+    return value.str
+}
+
+func (value *Slice) Get() []RootType {
+    return value.slice
+}
+
+func (value *Map) Get() map[RootType]RootType {
+    return value.m
 }

@@ -1,7 +1,6 @@
 package types
 
 import (
-    "bytes"
     "encoding/binary"
     "errors"
     "fmt"
@@ -251,11 +250,12 @@ func (value *Int128) ToString(base int) (string, error) {
     return "", nil
 }
 
-func (value *Int128) ToBytes() *bytes.Buffer {
-    bytesBuffer := bytes.NewBuffer(make([]byte, 0))
-    binary.Write(bytesBuffer, binary.LittleEndian, value)
+func (value *Int128) ToBytes() []byte {
+    b := make([]byte, 16)
+    binary.LittleEndian.PutUint64(b[:8], value.low)
+    binary.LittleEndian.PutUint64(b[8:], value.high)
 
-    return bytesBuffer
+    return b
 }
 
 func (value *Int128) IsSigned() bool {
