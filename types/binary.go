@@ -11,7 +11,7 @@ type Binary struct {
     buf *bytes.Buffer
 }
 
-func NewBinary(length int) *Binary {
+func NewBinary(length int) RootType {
     if length < 0 {
         return nil
     }

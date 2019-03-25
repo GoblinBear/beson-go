@@ -17,11 +17,11 @@ func parseBinaryToUint(s string) *UInt128 {
         if err != nil {
             return nil
         }
-        newValue := UInt128 {
+        newValue := &UInt128 {
             high: 0,
             low: low,
         }
-        return &newValue
+        return newValue
     }
 
     low, err1 := strconv.ParseUint(s[len(s) - 64:], 2, 64)
@@ -33,11 +33,11 @@ func parseBinaryToUint(s string) *UInt128 {
         return nil
     }
 
-    newValue := UInt128 {
+    newValue := &UInt128 {
         high: high,
         low: low,
     }
-    return &newValue
+    return newValue
 }
 
 func parseDecimalToUint(s string) *UInt128 {
@@ -46,15 +46,15 @@ func parseDecimalToUint(s string) *UInt128 {
     }
 
     remain := s
-    newValue := UInt128 {
+    newValue := &UInt128 {
         high: 0,
         low: 0,
     }
-    stepper := UInt128 {
+    stepper := &UInt128 {
         high: 0,
         low: DECIMAL_STEPPER,
     }
-    pow := UInt128 {
+    pow := &UInt128 {
         high: 0,
         low: 1,
     }
@@ -68,18 +68,18 @@ func parseDecimalToUint(s string) *UInt128 {
         }
 
         low, _ := strconv.ParseUint(remain[len(remain) - cutoff:], 10, 64)
-        add := UInt128 {
+        add := &UInt128 {
             high: 0,
             low: low,
         }
-        newValue.multiply(&add, &pow)
-        newValue.add(&newValue, &add)
+        newValue.multiply(add, pow)
+        newValue.add(newValue, add)
 
         remain = remain[:len(remain) - cutoff]
-        newValue.multiply(&pow, &stepper)
+        newValue.multiply(pow, stepper)
     }
 
-    return &newValue
+    return newValue
 }
 
 func parseHexToUint(s string) *UInt128 {
@@ -95,11 +95,11 @@ func parseHexToUint(s string) *UInt128 {
         if err != nil {
             return nil
         }
-        newValue := UInt128 {
+        newValue := &UInt128 {
             high: 0,
             low: low,
         }
-        return &newValue
+        return newValue
     }
 
     low, err1 := strconv.ParseUint(s[len(s) - 16:], 16, 64)
@@ -111,11 +111,11 @@ func parseHexToUint(s string) *UInt128 {
         return nil
     }
 
-    newValue := UInt128 {
+    newValue := &UInt128 {
         high: high,
         low: low,
     }
-    return &newValue
+    return newValue
 }
 
 func decimalStringToBinaryString(str string) string {
@@ -248,21 +248,21 @@ func (value *UInt128) add(a *UInt128, b *UInt128) {
 }
 
 func (value *UInt128) sub(a *UInt128, b *UInt128) {
-    newB := UInt128 {
+    newB := &UInt128 {
         high: b.high,
         low: b.low,
     }
     
-    value.twosComplement(&newB)
-    value.add(a, &newB)
+    value.twosComplement(newB)
+    value.add(a, newB)
 }
 
 func (value *UInt128) multiply(a *UInt128, b *UInt128) {
-    multiplier := UInt128 {
+    multiplier := &UInt128 {
         high: b.high,
         low: b.low,
     }
-    ans := UInt128 {
+    ans := &UInt128 {
         high: 0,
         low: 0,
     }
@@ -271,10 +271,10 @@ func (value *UInt128) multiply(a *UInt128, b *UInt128) {
 
     for i := 0; i < bits; i++ {
         if multiplier.low & 1 == 1 {
-            value.add(&ans, a)
+            value.add(ans, a)
         }
         value.leftShift(a, 1)
-        value.rightShiftUnsigned(&multiplier, 1)
+        value.rightShiftUnsigned(multiplier, 1)
     }
     
     a.high = ans.high
@@ -282,15 +282,15 @@ func (value *UInt128) multiply(a *UInt128, b *UInt128) {
 }
 
 func (value *UInt128) divide(a *UInt128, b *UInt128) *UInt128 {
-    quotient := UInt128 {
+    quotient := &UInt128 {
         high: 0,
         low: 0,
     }
-    remainder := UInt128 {
+    remainder := &UInt128 {
         high: a.high,
         low: a.low,
     }
-    divider := UInt128 {
+    divider := &UInt128 {
         high: b.high,
         low: b.low,
     }
@@ -303,7 +303,7 @@ func (value *UInt128) divide(a *UInt128, b *UInt128) *UInt128 {
         remainder.low = a.low
         a.high = 0
         a.low = 0
-        return &remainder
+        return remainder
     }
 
     var mask uint64 = 0x8000000000000000
@@ -316,7 +316,7 @@ func (value *UInt128) divide(a *UInt128, b *UInt128) *UInt128 {
             break
         }
 
-        value.leftShift(&remainder, 1)
+        value.leftShift(remainder, 1)
         rPadding++
         count--
     }
@@ -330,30 +330,30 @@ func (value *UInt128) divide(a *UInt128, b *UInt128) *UInt128 {
             break
         }
         
-        value.leftShift(&divider, 1)
+        value.leftShift(divider, 1)
         dPadding++
         count--
     }
-    value.rightShiftUnsigned(&divider, rPadding)
+    value.rightShiftUnsigned(divider, rPadding)
 
     count = dPadding - rPadding + 1
     for count > 0 {
         count--
 
-        if value.compare(&remainder, &divider) >= 0 {
-            value.sub(&remainder, &divider)
+        if value.compare(remainder, divider) >= 0 {
+            value.sub(remainder, divider)
             quotient.low = quotient.low | 1
         }
         if count > 0 {
-            value.leftShift(&quotient, 1)
-            value.rightShiftUnsigned(&divider, 1)
+            value.leftShift(quotient, 1)
+            value.rightShiftUnsigned(divider, 1)
         }
     }
 
     a.high = quotient.high
     a.low = quotient.low
 
-    return &remainder
+    return remainder
 }
 
 func (value *UInt128) nbits(val *UInt128) int {
@@ -419,18 +419,18 @@ func (value *UInt128) toHexString(val *UInt128) string {
 func (value *UInt128) toDecimalString(val *UInt128) string {
     var output []string
 
-    stepper := UInt128 {
+    stepper := &UInt128 {
         high: 0,
         low: DECIMAL_STEPPER,
     }
     
-    quotient := UInt128 {
+    quotient := &UInt128 {
         high: val.high,
         low: val.low,
     }
 
-    for !value.isZero(&quotient) {
-        remain := value.divide(&quotient, &stepper)
+    for !value.isZero(quotient) {
+        remain := value.divide(quotient, stepper)
         var slc []string
         slc = append(slc, strconv.FormatUint(remain.low, 10))
         output = append(slc, output...)

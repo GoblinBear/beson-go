@@ -15,7 +15,7 @@ type UInt128 struct {
     low uint64
 }
 
-func NewUInt128(s string, base int) *UInt128 {
+func NewUInt128(s string, base int) RootType {
     switch base {
     case 2:
         return parseBinaryToUint(s)
@@ -31,101 +31,101 @@ func NewUInt128(s string, base int) *UInt128 {
 }
 
 func (value *UInt128) Rshift(bits uint) *UInt128 {
-    newValue := UInt128 {
+    newValue := &UInt128 {
         high: value.high,
         low: value.low,
     }
-    value.rightShiftUnsigned(&newValue, bits)
-    return &newValue
+    value.rightShiftUnsigned(newValue, bits)
+    return newValue
 }
 
 func (value *UInt128) Lshift(bits uint) *UInt128 {
-    newValue := UInt128 {
+    newValue := &UInt128 {
         high: value.high,
         low: value.low,
     }
-    value.leftShift(&newValue, bits)
-    return &newValue
+    value.leftShift(newValue, bits)
+    return newValue
 }
 
 func (value *UInt128) Not() *UInt128 {
-    newValue := UInt128 {
+    newValue := &UInt128 {
         high: value.high,
         low: value.low,
     }
-    value.not(&newValue)
-    return &newValue
+    value.not(newValue)
+    return newValue
 }
 
 func (value *UInt128) Or(val *UInt128) *UInt128 {
-    newValue := UInt128 {
+    newValue := &UInt128 {
         high: value.high,
         low: value.low,
     }
-    newValue.or(&newValue, val)
-    return &newValue
+    newValue.or(newValue, val)
+    return newValue
 }
 
 func (value *UInt128) And(val *UInt128) *UInt128 {
-    newValue := UInt128 {
+    newValue := &UInt128 {
         high: value.high,
         low: value.low,
     }
-    newValue.and(&newValue, val)
-    return &newValue
+    newValue.and(newValue, val)
+    return newValue
 }
 
 func (value *UInt128) Xor(val *UInt128) *UInt128 {
-    newValue := UInt128 {
+    newValue := &UInt128 {
         high: value.high,
         low: value.low,
     }
-    newValue.xor(&newValue, val)
-    return &newValue
+    newValue.xor(newValue, val)
+    return newValue
 }
 
 func (value *UInt128) Add(val *UInt128) *UInt128 {
-    newValue := UInt128 {
+    newValue := &UInt128 {
         high: value.high,
         low: value.low,
     }
-    newValue.add(&newValue, val)
-    return &newValue
+    newValue.add(newValue, val)
+    return newValue
 }
 
 func (value *UInt128) Sub(val *UInt128) *UInt128 {
-    newValue := UInt128 {
+    newValue := &UInt128 {
         high: value.high,
         low: value.low,
     }
-    newValue.sub(&newValue, val)
-    return &newValue
+    newValue.sub(newValue, val)
+    return newValue
 }
 
 func (value *UInt128) Multiply(val *UInt128) *UInt128 {
-    newValue := UInt128 {
+    newValue := &UInt128 {
         high: value.high,
         low: value.low,
     }
-    newValue.multiply(&newValue, val)
-    return &newValue
+    newValue.multiply(newValue, val)
+    return newValue
 }
 
 func (value *UInt128) Divide(val *UInt128) *UInt128 {
-    newValue := UInt128 {
+    newValue := &UInt128 {
         high: value.high,
         low: value.low,
     }
-    newValue.divide(&newValue, val)
-    return &newValue
+    newValue.divide(newValue, val)
+    return newValue
 }
 
 func (value *UInt128) Modulo(val *UInt128) *UInt128 {
-    newValue := UInt128 {
+    newValue := &UInt128 {
         high: value.high,
         low: value.low,
     }
-    ans := newValue.divide(&newValue, val)
+    ans := newValue.divide(newValue, val)
     return ans
 }
 
@@ -153,7 +153,7 @@ func (value *UInt128) ToString(base int) (string, error) {
 
 func (value *UInt128) ToBytes() *bytes.Buffer {
     bytesBuffer := bytes.NewBuffer(make([]byte, 0))
-    binary.Write(bytesBuffer, binary.BigEndian, value)
+    binary.Write(bytesBuffer, binary.LittleEndian, value)
 
     return bytesBuffer
 }
@@ -163,7 +163,7 @@ func (value *UInt128) IsSigned() bool {
 }
 
 func (value *UInt128) SetValue(str string, base int) {
-    newValue := NewUInt128(str, base)
+    newValue := NewUInt128(str, base).(*UInt128)
     value.high = newValue.high
     value.low = newValue.low
 }
@@ -185,19 +185,19 @@ func (value *UInt128) SetLow(low uint64) {
 }
 
 func (value *UInt128) ZERO() *UInt128 {
-    newValue := UInt128 {
+    newValue := &UInt128 {
         high: 0,
         low: 0,
     }
 
-    return &newValue;
+    return newValue;
 }
 
 func (value *UInt128) MAX() *UInt128 {
-    newValue := UInt128 {
+    newValue := &UInt128 {
         high: 0xFFFFFFFFFFFFFFFF,
         low: 0xFFFFFFFFFFFFFFFF,
     }
 
-    return &newValue;
+    return newValue;
 }
