@@ -39,7 +39,7 @@ func getType(data interface{}) string {
 
     switch data.(type) {
     case *types.Bool:
-        if data.(bool) {
+        if data.(*types.Bool).Get() {
             t = DATA_TYPE["TRUE"]
         } else {
             t = DATA_TYPE["FALSE"]
@@ -137,7 +137,8 @@ func serializeData(t string, data interface{}) []byte {
         buffers = make([]byte, 8)
         binary.LittleEndian.PutUint64(buffers, bits)
     case DATA_TYPE["STRING"]:
-        buffers = []byte(data.(*types.String).Get())
+        s := data.(*types.String)
+        buffers = serializeString(s)
     case DATA_TYPE["ARRAY"]:
         slice := data.(*types.Slice)
         buffers = serializeSlice(slice)
@@ -169,6 +170,17 @@ func serializeInt128(value *types.Int128) []byte {
     return buf
 }
 
+func serializeString(value *types.String) []byte {
+    str := value.Get()
+    length := len(str)
+    lengthBytes := make([]byte, 4)
+    binary.LittleEndian.PutUint32(lengthBytes, uint32(length))
+    
+    dataBytes := []byte(str)
+    buf := concatBytesArray(lengthBytes, dataBytes)
+    return buf
+}
+
 func serializeSlice(value *types.Slice) []byte {
     slice := value.Get()
     subBytesBuffer := bytes.NewBuffer(make([]byte, 0))
@@ -196,7 +208,7 @@ func serializeMap(value *types.Map) []byte {
     m := value.Get()
     for key, value := range m {
         // serialize key
-        keyBytes := serializeString(key)
+        keyBytes := []byte(key)
 
         // serialize value
         subType := getType(value)
@@ -216,11 +228,6 @@ func serializeMap(value *types.Map) []byte {
     subBytesBuffer.Read(dataBytes)
 
     buf := concatBytesArray(lengthBytes, dataBytes)
-    return buf
-}
-
-func serializeString(str string) []byte {
-    buf := []byte(str)
     return buf
 }
 

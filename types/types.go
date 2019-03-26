@@ -181,3 +181,62 @@ func (value *Slice) Get() []RootType {
 func (value *Map) Get() map[string]RootType {
     return value.m
 }
+
+
+/* Set value */
+
+func (value *UInt8) Set(newValue uint8) {
+    value.value = newValue
+}
+
+func (value *UInt16) Set(newValue uint16) {
+    value.value = newValue
+}
+
+func (value *UInt32) Set(newValue uint32) {
+    value.value = newValue
+}
+
+func (value *UInt64) Set(newValue uint64) {
+    value.value = newValue
+}
+
+func (value *Int8) Set(newValue int8) {
+    value.value = newValue
+}
+
+func (value *Int16) Set(newValue int16) {
+    value.value = newValue
+}
+
+func (value *Int32) Set(newValue int32) {
+    value.value = newValue
+}
+
+func (value *Int64) Set(newValue int64) {
+    value.value = newValue
+}
+
+func (value *Float32) Set(newValue float32) {
+    value.value = newValue
+}
+
+func (value *Float64) Set(newValue float64) {
+    value.value = newValue
+}
+
+func (value *Bool) Set(newValue bool) {
+    value.value = newValue
+}
+
+func (value *String) Set(newValue string) {
+    value.str = newValue
+}
+
+func (value *Slice) Set(newValue []RootType) {
+    value.slice = newValue
+}
+
+func (value *Map) Set(newValue map[string]RootType) {
+    value.m = newValue
+}
