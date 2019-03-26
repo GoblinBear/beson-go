@@ -3,7 +3,6 @@ package beson
 import (
     "bytes"
     "encoding/binary"
-    "fmt"
     "math"
     "strings"
 
@@ -11,14 +10,13 @@ import (
 )
 
 func Serialize(data interface{}) []byte {
-    fmt.Println(".")
-    return SerializeContent(data)
+    return serializeContent(data)
 }
 
-func SerializeContent(data interface{}) []byte {
-    t := GetType(data)
-    typeBuffer := SerializeType(t)
-    dataBuffers := SerializeData(t, data)
+func serializeContent(data interface{}) []byte {
+    t := getType(data)
+    typeBuffer := serializeType(t)
+    dataBuffers := serializeData(t, data)
 
     bytesBuffer := bytes.NewBuffer(make([]byte, 0))
     bytesBuffer.Write(typeBuffer)
@@ -31,7 +29,7 @@ func SerializeContent(data interface{}) []byte {
     return serialContent
 }
 
-func GetType(data interface{}) string {
+func getType(data interface{}) string {
     var t string
 
     if data == nil {
@@ -85,7 +83,7 @@ func GetType(data interface{}) string {
     return t
 }
 
-func SerializeType(t string) []byte {
+func serializeType(t string) []byte {
     typeHeader := make([]byte, 0)
     if t != "" {
         t = strings.ToUpper(t)
@@ -94,7 +92,7 @@ func SerializeType(t string) []byte {
     return typeHeader
 }
 
-func SerializeData(t string, data interface{}) []byte {
+func serializeData(t string, data interface{}) []byte {
     var buffers []byte
 
     switch t {
@@ -141,8 +139,11 @@ func SerializeData(t string, data interface{}) []byte {
     case DATA_TYPE["STRING"]:
         buffers = []byte(data.(*types.String).Get())
     case DATA_TYPE["ARRAY"]:
-        // TODO
-        
+        slice := data.(*types.Slice)
+        buffers = serializeSlice(slice)
+    case DATA_TYPE["MAP"]:
+        m := data.(*types.Map)
+        buffers = serializeMap(m)
     }
 
     return buffers
@@ -166,4 +167,73 @@ func serializeUInt128(value *types.UInt128) []byte {
 func serializeInt128(value *types.Int128) []byte {
     buf := value.ToBytes()
     return buf
+}
+
+func serializeSlice(value *types.Slice) []byte {
+    slice := value.Get()
+    subBytesBuffer := bytes.NewBuffer(make([]byte, 0))
+    for _, element := range slice {
+        subType := getType(element)
+        subTypeBytes := serializeType(subType)
+        subDataBytes := serializeData(subType, element)
+        subBytesBuffer.Write(subTypeBytes)
+        subBytesBuffer.Write(subDataBytes)
+    }
+
+    length := subBytesBuffer.Len()
+    lengthBytes := make([]byte, 4)
+    binary.LittleEndian.PutUint32(lengthBytes, uint32(length))
+
+    dataBytes := make([]byte, length)
+    subBytesBuffer.Read(dataBytes)
+
+    buf := concatBytesArray(lengthBytes, dataBytes)
+    return buf
+}
+
+func serializeMap(value *types.Map) []byte {
+    subBytesBuffer := bytes.NewBuffer(make([]byte, 0))
+    m := value.Get()
+    for key, value := range m {
+        // serialize key
+        keyBytes := serializeString(key)
+
+        // serialize value
+        subType := getType(value)
+        subTypeBytes := serializeType(subType)
+        subDataBytes := serializeData(subType, value)
+
+        subBytesBuffer.Write(subTypeBytes)
+        subBytesBuffer.Write(keyBytes)
+        subBytesBuffer.Write(subDataBytes)
+    }
+
+    length := subBytesBuffer.Len()
+    lengthBytes := make([]byte, 4)
+    binary.LittleEndian.PutUint32(lengthBytes, uint32(length))
+
+    dataBytes := make([]byte, length)
+    subBytesBuffer.Read(dataBytes)
+
+    buf := concatBytesArray(lengthBytes, dataBytes)
+    return buf
+}
+
+func serializeString(str string) []byte {
+    buf := []byte(str)
+    return buf
+}
+
+func concatBytesArray(b1 []byte, b2 ...[]byte) []byte {
+    buf := bytes.NewBuffer(make([]byte, 0))
+    
+    buf.Write(b1)
+    for _, element := range b2 {
+        buf.Write(element)
+    }
+
+    newBytes := make([]byte, buf.Len())
+    buf.Read(newBytes)
+
+    return newBytes
 }

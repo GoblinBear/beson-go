@@ -61,7 +61,7 @@ type Slice struct {
 }
 
 type Map struct {
-	m map[RootType]RootType
+	m map[string]RootType
 }
 
 
@@ -119,7 +119,7 @@ func NewSlice(value []RootType) RootType {
     return &Slice { value }
 }
 
-func NewMap(value map[RootType]RootType) RootType {
+func NewMap(value map[string]RootType) RootType {
     return &Map { value }
 }
 
@@ -178,6 +178,6 @@ func (value *Slice) Get() []RootType {
     return value.slice
 }
 
-func (value *Map) Get() map[RootType]RootType {
+func (value *Map) Get() map[string]RootType {
     return value.m
 }
