@@ -71,6 +71,8 @@ func deserializeData(t string , buffer []byte, start uint32)(uint32, types.RootT
         anchor, value = deserializeSlice(buffer, start)
     case DATA_TYPE["MAP"]:
         anchor, value = deserializeMap(buffer, start)
+    case DATA_TYPE["BINARY"]:
+        anchor, value = deserializeBinary(buffer, start)
     }
     return anchor, value
 }
@@ -264,3 +266,12 @@ func deserializeMap(buffer []byte, start uint32)(uint32, types.RootType) {
     return end, value
 }
 
+func deserializeBinary(buffer []byte, start uint32)(uint32, types.RootType) {
+    length := binary.LittleEndian.Uint32(buffer[start:start + 4])
+    end := start + 4 + length
+    bs := buffer[start + 4:end]
+    bin := types.NewBinary(0).(*types.Binary)
+    value := bin.FromBytes(bs)
+
+    return end, value
+}

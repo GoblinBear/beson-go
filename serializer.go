@@ -145,6 +145,9 @@ func serializeData(t string, data interface{}) []byte {
     case DATA_TYPE["MAP"]:
         m := data.(*types.Map)
         buffers = serializeMap(m)
+    case DATA_TYPE["BINARY"]:
+        b := data.(*types.Binary)
+        buffers = serializeBinary(b)
     }
 
     return buffers
@@ -238,6 +241,16 @@ func serializeMap(value *types.Map) []byte {
 
     dataBytes := make([]byte, length)
     subBytesBuffer.Read(dataBytes)
+
+    buf := concatBytesArray(lengthBytes, dataBytes)
+    return buf
+}
+
+func serializeBinary(value *types.Binary) []byte {
+    dataBytes := value.ToBytes()
+    length := len(dataBytes)
+    lengthBytes := make([]byte, 4)
+    binary.LittleEndian.PutUint32(lengthBytes, uint32(length))
 
     buf := concatBytesArray(lengthBytes, dataBytes)
     return buf

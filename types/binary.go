@@ -101,3 +101,7 @@ func (bin *Binary) FromHex(hexString string) *Binary {
     bs := bin.bufferFromHex(hexString)
     return &Binary { bs: bs }
 }
+
+func (bin *Binary) FromBytes(b []byte) *Binary {
+    return &Binary { bs: b }
+}
