@@ -12,7 +12,7 @@ var HEX_MAP_I = map[rune]uint8 {
     'A':10, 'B':11, 'C':12, 'D':13, 'E':14, 'F':15,
 };
 
-func (bin *Binary) bufferFromHex(hexString string) *bytes.Buffer {
+func (bin *Binary) bufferFromHex(hexString string) []byte {
     isMatch, _ := regexp.MatchString(HEX_FORMAT_CHECKER, hexString)
     if isMatch {
         hexString = hexString[2:]
@@ -26,33 +26,39 @@ func (bin *Binary) bufferFromHex(hexString string) *bytes.Buffer {
             buf := HEX_MAP_I[rune(hexString[offset+1])] | (HEX_MAP_I[rune(hexString[offset])] << 4)
             bytesBuffer.WriteByte(buf)
         }
-        return bytesBuffer
+        
+        newBytes := make([]byte, bytesBuffer.Len())
+        bytesBuffer.Read(newBytes)
+
+        return newBytes
     }
 
     return nil
 }
 
-func (bin *Binary) bufferConcat(segments ...*Binary) *bytes.Buffer {
+func (bin *Binary) bufferConcat(segments ...*Binary) []byte {
     bytesBuffer := bytes.NewBuffer(make([]byte, 0))
 
     for _, seg := range segments {
-        newBytes := make([]byte, seg.buf.Len())
-        seg.buf.Read(newBytes)
+        newBytes := make([]byte, len(seg.bs))
         bytesBuffer.Write(newBytes)
     }
 
-    return bytesBuffer
+    newBytes := make([]byte, bytesBuffer.Len())
+    bytesBuffer.Read(newBytes)
+
+    return newBytes
 }
 
-func (bin *Binary) compare(a *bytes.Buffer, b *bytes.Buffer, align bool) int {
-    if a.Len() == 0 && b.Len() == 0 {
+func (bin *Binary) compare(a []byte, b []byte, align bool) int {
+    if len(a) == 0 && len(b) == 0 {
         return 0
     }
 
-    newA := make([]byte, a.Len())
-    newB := make([]byte, b.Len())
-    a.Read(newA)
-    b.Read(newB)
+    newA := make([]byte, len(a))
+    newB := make([]byte, len(b))
+    copy(newA, a)
+    copy(newB, b)
 
     if !align {
         var valA, valB, max int 
@@ -139,10 +145,10 @@ func (bin *Binary) compare(a *bytes.Buffer, b *bytes.Buffer, align bool) int {
     return 0
 }
 
-func (bin *Binary) leftShift(value *bytes.Buffer, bits uint, padding uint8) {
-    valueLength := uint(value.Len())
-    newBytes := make([]byte, value.Len())
-    value.Read(newBytes)
+func (bin *Binary) leftShift(value []byte, bits uint, padding uint8) {
+    valueLength := uint(len(value))
+    newBytes := make([]byte, valueLength)
+    copy(newBytes, value)
 
     if bits > 0 {
         if padding == 0 {
@@ -193,13 +199,12 @@ func (bin *Binary) leftShift(value *bytes.Buffer, bits uint, padding uint8) {
             }
         }
     }
-    value.Write(newBytes)
 }
 
-func (bin *Binary) rightShift(value *bytes.Buffer, bits uint, padding uint8) {
-    valueLength := uint(value.Len())
-    newBytes := make([]byte, value.Len())
-    value.Read(newBytes)
+func (bin *Binary) rightShift(value []byte, bits uint, padding uint8) {
+    valueLength := uint(len(value))
+    newBytes := make([]byte, valueLength)
+    copy(newBytes, value)
 
     if bits > 0 {
         if padding == 0 {
@@ -249,18 +254,16 @@ func (bin *Binary) rightShift(value *bytes.Buffer, bits uint, padding uint8) {
             }
         }
     }
-    value.Write(newBytes)
 }
 
-func (bin *Binary) not(value *bytes.Buffer) {
-    valueLength := value.Len()
+func (bin *Binary) not(value []byte) {
+    valueLength := len(value)
     newBytes := make([]byte, valueLength)
-    value.Read(newBytes)
+    copy(newBytes, value)
 
     for off := 0; off < valueLength; off++ {
         newBytes[off] = ^newBytes[off];
     }
-    value.Write(newBytes)
 }
 
 func (bin *Binary) genMask(bits uint) uint8 {
@@ -287,10 +290,10 @@ func (bin *Binary) paddingZero(data string, length int) string {
     return padded + data;
 }
 
-func (bin *Binary) toBinaryString(val *bytes.Buffer) string {
+func (bin *Binary) toBinaryString(val []byte) string {
     str := ""
-    newBytes := make([]byte, val.Len())
-    val.Read(newBytes)
+    newBytes := make([]byte, len(val))
+    copy(newBytes, val)
 
     for _, byte := range newBytes {
         s := strconv.FormatInt(int64(byte), 2)
@@ -300,10 +303,10 @@ func (bin *Binary) toBinaryString(val *bytes.Buffer) string {
     return str
 }
 
-func (bin *Binary) toHexString(val *bytes.Buffer) string {
+func (bin *Binary) toHexString(val []byte) string {
     str := ""
-    newBytes := make([]byte, val.Len())
-    val.Read(newBytes)
+    newBytes := make([]byte, len(val))
+    copy(newBytes, val)
 
     for _, byte := range newBytes {
         s := strconv.FormatInt(int64(byte), 16)

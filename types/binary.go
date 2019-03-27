@@ -2,13 +2,12 @@ package types
 
 import (
     "errors"
-    "bytes"
 )
 
 const HEX_FORMAT_CHECKER string = "^0x[0-9a-fA-F]+$";
 
 type Binary struct {
-    buf *bytes.Buffer
+    bs []byte
 }
 
 func NewBinary(length int) RootType {
@@ -16,29 +15,25 @@ func NewBinary(length int) RootType {
         return nil
     }
 
-    bytesBuffer := bytes.NewBuffer(make([]byte, length))
-    return &Binary { buf: bytesBuffer }
+    newBytes := make([]byte, length)
+    return &Binary { bs: newBytes }
 }
 
 func (bin *Binary) Size() int {
-    return bin.buf.Len()
+    return len(bin.bs)
 }
 
 func (bin *Binary) Clone() *Binary {
-    newBytes := make([]byte, bin.buf.Len())
-    bin.buf.Read(newBytes)
-
-    bytesBuffer := bytes.NewBuffer(make([]byte, bin.buf.Len()))
-    bytesBuffer.Write(newBytes)
-
-    return &Binary { buf: bytesBuffer }
+    newBytes := make([]byte, len(bin.bs))
+    copy(newBytes, bin.bs)
+    return &Binary { bs: newBytes }
 }
 
 func (bin *Binary) Append(segments ...*Binary) *Binary {
     segments = append([]*Binary{ bin }, segments...)
     bytesBuffer := bin.bufferConcat(segments...)
 
-    return &Binary { buf: bytesBuffer }
+    return &Binary { bs: bytesBuffer }
 }
 
 func (bin *Binary) Resize(length int) *Binary {
@@ -46,59 +41,48 @@ func (bin *Binary) Resize(length int) *Binary {
         return nil
     }
     
-    if length == bin.buf.Len() {
+    if length == len(bin.bs) {
         return bin
-    } else if length < bin.buf.Len() {
+    } else if length < len(bin.bs) {
         newBytes := make([]byte, length)
-        bin.buf.Read(newBytes)
-        
-        bytesBuffer := bytes.NewBuffer(make([]byte, 0))
-        bytesBuffer.Write(newBytes)
-        
-        return &Binary { buf: bytesBuffer }
+        copy(newBytes, bin.bs[:length])        
+        return &Binary { bs: newBytes }
     }
 
-    newBytes := make([]byte, length - bin.buf.Len())
-    bin.buf.Write(newBytes)
-
+    newBytes := make([]byte, length)
+    copy(newBytes, bin.bs)
     return bin
 }
 
 func (bin *Binary) LeftShift(bits uint, padding uint8) *Binary {
-    bin.leftShift(bin.buf, bits, padding);
+    bin.leftShift(bin.bs, bits, padding);
     return bin
 }
 
 func (bin *Binary) RightShift(bits uint, padding uint8) *Binary {
-    bin.rightShift(bin.buf, bits, padding);
+    bin.rightShift(bin.bs, bits, padding);
     return bin
 }
 
 func (bin *Binary) Not() *Binary {
-    bin.not(bin.buf)
+    bin.not(bin.bs)
     return bin
 }
 
 func (bin *Binary) Compare(value *Binary, align bool) int {
-    newBytes := make([]byte, value.buf.Len())
-    value.buf.Read(newBytes)
-    
-    bytesBuffer := bytes.NewBuffer(make([]byte, 0))
-    bytesBuffer.Write(newBytes)
-    
-    return bin.compare(bin.buf, bytesBuffer, align)
+    return bin.compare(bin.bs, value.bs, align)
 }
 
-func (bin *Binary) ToBytes() *bytes.Buffer {
-    return bin.buf
+func (bin *Binary) ToBytes() []byte {
+    return bin.bs
 }
 
 func (bin *Binary) ToString(base int) (string, error) {
     switch base {
     case 2:
-        return bin.toBinaryString(bin.buf), nil
+        return bin.toBinaryString(bin.bs), nil
     case 16:
-        return bin.toHexString(bin.buf), nil
+        return bin.toHexString(bin.bs), nil
     default:
         return "", errors.New("Only accepts 2 and 16 representations.")
     }
@@ -106,14 +90,14 @@ func (bin *Binary) ToString(base int) (string, error) {
 }
 
 func (bin *Binary) From(segments ...*Binary) *Binary {
-    bytesBuffer := bin.bufferConcat(segments...)
-    return &Binary { buf: bytesBuffer }
+    bs := bin.bufferConcat(segments...)
+    return &Binary { bs: bs }
 }
 
 func (bin *Binary) FromHex(hexString string) *Binary {
     if len(hexString) < 2 || hexString[0:2] != "0x" {
         hexString = "0x" + hexString
     }
-    bytesBuffer := bin.bufferFromHex(hexString)
-    return &Binary { buf: bytesBuffer }
+    bs := bin.bufferFromHex(hexString)
+    return &Binary { bs: bs }
 }
