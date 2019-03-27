@@ -181,6 +181,17 @@ func serializeString(value *types.String) []byte {
     return buf
 }
 
+func serializeShortString(value *types.String) []byte {
+    str := value.Get()
+    length := len(str)
+    lengthBytes := make([]byte, 2)
+    binary.LittleEndian.PutUint16(lengthBytes, uint16(length))
+    
+    dataBytes := []byte(str)
+    buf := concatBytesArray(lengthBytes, dataBytes)
+    return buf
+}
+
 func serializeSlice(value *types.Slice) []byte {
     slice := value.Get()
     subBytesBuffer := bytes.NewBuffer(make([]byte, 0))
@@ -208,7 +219,8 @@ func serializeMap(value *types.Map) []byte {
     m := value.Get()
     for key, value := range m {
         // serialize key
-        keyBytes := []byte(key)
+        k := types.NewString(key).(*types.String)
+        keyBytes := serializeShortString(k)
 
         // serialize value
         subType := getType(value)

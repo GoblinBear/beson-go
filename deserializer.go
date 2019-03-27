@@ -2,16 +2,11 @@ package beson
 
 import (
     "encoding/binary"
-    "fmt"
     "math"
     "strings"
 
     "beson/types"
 )
-
-func aaa() {
-    fmt.Println(".")
-}
 
 func Deserialize(buffer []byte, anchor uint32)(uint32, types.RootType) {
     return deserializeContent(buffer, anchor)
@@ -72,6 +67,10 @@ func deserializeData(t string , buffer []byte, start uint32)(uint32, types.RootT
         anchor, value = deserializeFloat64(buffer, start)
     case DATA_TYPE["STRING"]:
         anchor, value = deserializeString(buffer, start)
+    case DATA_TYPE["ARRAY"]:
+        anchor, value = deserializeSlice(buffer, start)
+    case DATA_TYPE["MAP"]:
+        anchor, value = deserializeMap(buffer, start)
     }
     return anchor, value
 }
@@ -217,3 +216,51 @@ func deserializeString(buffer []byte, start uint32)(uint32, types.RootType) {
 
     return end, value
 }
+
+func deserializeShortString(buffer []byte, start uint32)(uint32, types.RootType) {
+    length := binary.LittleEndian.Uint16(buffer[start:start + 2])
+    end := start + 2 + uint32(length)
+    str := string(buffer[start + 2:end])
+    value := types.NewString(str).(*types.String)
+
+    return end, value
+}
+
+func deserializeSlice(buffer []byte, start uint32)(uint32, types.RootType) {
+    length := binary.LittleEndian.Uint32(buffer[start:start + 4])
+    start = start + 4
+    end := start + length
+    slice := []types.RootType{}
+
+    for start < end {
+        var subType string
+        var subData types.RootType
+        start, subType = deserializeType(buffer, start)
+        start, subData = deserializeData(subType, buffer, start)
+        slice = append(slice, subData)
+    }
+
+    value := types.NewSlice(slice).(*types.Slice)
+    return end, value
+}
+
+func deserializeMap(buffer []byte, start uint32)(uint32, types.RootType) {
+    length := binary.LittleEndian.Uint32(buffer[start:start + 4])
+    start = start + 4
+    end := start + length
+    m := map[string]types.RootType{}
+
+    for start < end {
+        var subType string
+        var subKey types.RootType
+        var subData types.RootType
+        start, subType = deserializeType(buffer, start)
+        start, subKey = deserializeShortString(buffer, start)
+        start, subData = deserializeData(subType, buffer, start)
+        m[subKey.(*types.String).Get()] = subData
+    }
+
+    value := types.NewMap(m).(*types.Map)
+    return end, value
+}
+
