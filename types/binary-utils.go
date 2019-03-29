@@ -40,8 +40,7 @@ func (bin *Binary) bufferConcat(segments ...*Binary) []byte {
     bytesBuffer := bytes.NewBuffer(make([]byte, 0))
 
     for _, seg := range segments {
-        newBytes := make([]byte, len(seg.bs))
-        bytesBuffer.Write(newBytes)
+        bytesBuffer.Write(seg.bs)
     }
 
     newBytes := make([]byte, bytesBuffer.Len())
@@ -147,8 +146,6 @@ func (bin *Binary) compare(a []byte, b []byte, align bool) int {
 
 func (bin *Binary) leftShift(value []byte, bits uint, padding uint8) {
     valueLength := uint(len(value))
-    newBytes := make([]byte, valueLength)
-    copy(newBytes, value)
 
     if bits > 0 {
         if padding == 0 {
@@ -160,7 +157,7 @@ func (bin *Binary) leftShift(value []byte, bits uint, padding uint8) {
         if bits >= valueLength * 8 {
             var off uint
             for off = 0; off < valueLength; off++ {
-                newBytes[off] = byte(padding)
+                value[off] = byte(padding)
             }
         } else {
             offset := (bits / 8) | 0
@@ -180,22 +177,22 @@ func (bin *Binary) leftShift(value []byte, bits uint, padding uint8) {
                 shift := off + offset
                 
                 if realShift == 0 {
-                    newBytes[off] = newBytes[shift]
+                    value[off] = value[shift]
                 } else {
-                    shiftVal := newBytes[shift]
+                    shiftVal := value[shift]
                     var next uint8
                     if shift >= (valueLength - 1) {
                         next = padding
                     } else {
-                        next = uint8(newBytes[shift + 1])
+                        next = uint8(value[shift + 1])
                     }
 
-                    newBytes[off] = byte(uint8((shiftVal << realShift) | ((next & lowMask) >> realShiftI)))
+                    value[off] = byte(uint8((shiftVal << realShift) | ((next & lowMask) >> realShiftI)))
                 }
             }
 
             for off = lastOffset; off < valueLength; off++ {
-                newBytes[off] = byte(padding)
+                value[off] = byte(padding)
             }
         }
     }
@@ -203,8 +200,6 @@ func (bin *Binary) leftShift(value []byte, bits uint, padding uint8) {
 
 func (bin *Binary) rightShift(value []byte, bits uint, padding uint8) {
     valueLength := uint(len(value))
-    newBytes := make([]byte, valueLength)
-    copy(newBytes, value)
 
     if bits > 0 {
         if padding == 0 {
@@ -216,7 +211,7 @@ func (bin *Binary) rightShift(value []byte, bits uint, padding uint8) {
         if bits >= valueLength * 8 {
             var off uint
             for off = 0; off < valueLength; off++ {
-                newBytes[off] = byte(padding)
+                value[off] = byte(padding)
             }
         } else {
             offset := (bits / 8) | 0
@@ -235,22 +230,22 @@ func (bin *Binary) rightShift(value []byte, bits uint, padding uint8) {
                 shift := off - offset - 1
                 
                 if realShift == 0 {
-                    newBytes[off - 1] = newBytes[shift]
+                    value[off - 1] = value[shift]
                 } else {
-                    shiftVal := newBytes[shift]
+                    shiftVal := value[shift]
                     var next uint8
                     if shift == 0 {
                         next = padding
                     } else {
-                        next = uint8(newBytes[shift - 1])
+                        next = uint8(value[shift - 1])
                     }
 
-                    newBytes[off - 1] = byte(uint8((shiftVal >> realShift) | ((next & highMask) << realShiftI)))
+                    value[off - 1] = byte(uint8((shiftVal >> realShift) | ((next & highMask) << realShiftI)))
                 }
             }
             
             for off = offset; off > 0; off-- {
-                newBytes[off - 1] = byte(padding)
+                value[off - 1] = byte(padding)
             }
         }
     }
@@ -258,17 +253,14 @@ func (bin *Binary) rightShift(value []byte, bits uint, padding uint8) {
 
 func (bin *Binary) not(value []byte) {
     valueLength := len(value)
-    newBytes := make([]byte, valueLength)
-    copy(newBytes, value)
-
     for off := 0; off < valueLength; off++ {
-        newBytes[off] = ^newBytes[off];
+        value[off] = ^value[off]
     }
 }
 
 func (bin *Binary) genMask(bits uint) uint8 {
     if bits > 8 {
-        return 0xFF;
+        return 0xFF
     }
 
     var val uint8 = 0
@@ -283,11 +275,11 @@ func (bin *Binary) paddingZero(data string, length int) string {
     zeros := length - len(data)
     padded := ""
     for zeros > 0 {
-        padded = padded + "0";
+        padded = padded + "0"
         zeros--
     }
 
-    return padded + data;
+    return padded + data
 }
 
 func (bin *Binary) toBinaryString(val []byte) string {
@@ -297,7 +289,7 @@ func (bin *Binary) toBinaryString(val []byte) string {
 
     for _, byte := range newBytes {
         s := strconv.FormatInt(int64(byte), 2)
-        str = str + bin.paddingZero(s, 8);
+        str = str + bin.paddingZero(s, 8)
     }
 
     return str
@@ -310,7 +302,7 @@ func (bin *Binary) toHexString(val []byte) string {
 
     for _, byte := range newBytes {
         s := strconv.FormatInt(int64(byte), 16)
-        str = str + bin.paddingZero(s, 2);
+        str = str + bin.paddingZero(s, 2)
     }
 
     return str
