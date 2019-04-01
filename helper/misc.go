@@ -39,7 +39,6 @@ func BinaryStringToBytes(s string) []byte {
     str := s
     if len(s) & 7 > 0 {
         str = paddingZero(s, len(s) + 8 - (len(s) & 7))
-
     }
 
     byteNum := len(str) >> 3
@@ -67,6 +66,8 @@ func DecimalStringToBytes(s string, size int) []byte {
     } else if s[0] == '-' {
         neg = true
         str = s[1:]
+    } else {
+        str = s
     }
 
     if len(str) & 1 > 0 {
@@ -196,7 +197,6 @@ func RightShift(value []byte, bits uint, padding uint8)  {
         value[i] = high | low
     }
     
-
     // padding
     for i = valueLength - 1; i >= valueLength - byteNum; i-- {
         value[i] = padding
