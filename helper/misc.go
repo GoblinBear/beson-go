@@ -11,13 +11,7 @@ import (
 const BYTE_MAX byte = 255
 const DECIMAL_STEPPER byte = 100
 const DECIMAL_STEPPER_LEN int = 2
-
 const HEX_FORMAT_CHECKER string = "^0x[0-9a-fA-F]+$";
-var HEX_MAP_I = map[rune]uint8 {
-    '0':0, '1':1, '2':2, '3':3, '4':4, '5':5, '6':6, '7':7, '8':8, '9':9,
-    'a':10, 'b':11, 'c':12, 'd':13, 'e':14, 'f':15,
-    'A':10, 'B':11, 'C':12, 'D':13, 'E':14, 'F':15,
-};
 
 func HexStringToBytes(s string) []byte {
     if len(s) == 0 {
@@ -490,19 +484,6 @@ func paddingZero(data string, length int) string {
     }
 
     return padded + data;
-}
-
-func genMask(bits uint) uint8 {
-    if bits > 8 {
-        return 0xFF
-    }
-
-    var val uint8 = 0
-    for bits > 0 {
-        val = ((val << 1) | 1) >> 0
-        bits--
-    }
-    return val;
 }
 
 func nbits(value []byte) uint {
