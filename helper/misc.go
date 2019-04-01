@@ -1,9 +1,9 @@
 package helper
 
 import (
-	"fmt"
-	"bytes"
-	"encoding/hex"
+    "fmt"
+    "bytes"
+    "encoding/hex"
     "log"
     "strconv"
     "regexp"
@@ -12,7 +12,7 @@ import (
 var BYTE_MAX byte = 255
 
 func a () {
-	fmt.Println()
+    fmt.Println()
 }
 
 const HEX_FORMAT_CHECKER string = "^0x[0-9a-fA-F]+$";
@@ -26,11 +26,11 @@ func HexStringToBytes(s string) []byte {
     isMatch, _ := regexp.MatchString(HEX_FORMAT_CHECKER, s)
     if isMatch {
         s = s[2:]
-		decoded, err := hex.DecodeString(s)
-		if err != nil {
-			log.Fatal(err)
-			return nil
-		}
+        decoded, err := hex.DecodeString(s)
+        if err != nil {
+            log.Fatal(err)
+            return nil
+        }
         return decoded
     }
     return nil
@@ -44,7 +44,7 @@ func Concat(segments ...[]byte) []byte {
     buffer := bytes.NewBuffer(make([]byte, 0))
 
     for _, seg := range segments {
-		buffer.Write(seg)
+        buffer.Write(seg)
     }
 
     newBytes := make([]byte, buffer.Len())
@@ -54,26 +54,26 @@ func Concat(segments ...[]byte) []byte {
 }
 
 func LeftShift(value []byte, bits uint, padding uint8)  {
-	if bits == 0 {
-		return
-	}
-	if padding == 0 {
-		padding = 0x00
-	} else {
-		padding = 0xFF
-	}
+    if bits == 0 {
+        return
+    }
+    if padding == 0 {
+        padding = 0x00
+    } else {
+        padding = 0xFF
+    }
 
-	valueLength := uint(len(value))
-	
-	if bits >= valueLength * 8 {
-		var off uint
-		for off = 0; off < valueLength; off++ {
-			value[off] = byte(padding)
-		}
-		return
-	}
+    valueLength := uint(len(value))
+    
+    if bits >= valueLength * 8 {
+        var off uint
+        for off = 0; off < valueLength; off++ {
+            value[off] = byte(padding)
+        }
+        return
+    }
 
-	byteNum := bits >> 3
+    byteNum := bits >> 3
     bitNum := bits & 7
     
     // copy bits
@@ -99,26 +99,26 @@ func LeftShift(value []byte, bits uint, padding uint8)  {
 }
 
 func RightShift(value []byte, bits uint, padding uint8)  {
-	if bits == 0 {
-		return
-	}
-	if padding == 0 {
-		padding = 0x00
-	} else {
-		padding = 0xFF
-	}
+    if bits == 0 {
+        return
+    }
+    if padding == 0 {
+        padding = 0x00
+    } else {
+        padding = 0xFF
+    }
 
-	valueLength := uint(len(value))
-	
-	if bits >= valueLength * 8 {
-		var off uint
-		for off = 0; off < valueLength; off++ {
-			value[off] = byte(padding)
-		}
-		return
-	}
+    valueLength := uint(len(value))
+    
+    if bits >= valueLength * 8 {
+        var off uint
+        for off = 0; off < valueLength; off++ {
+            value[off] = byte(padding)
+        }
+        return
+    }
 
-	byteNum := bits >> 3
+    byteNum := bits >> 3
     bitNum := bits & 7
 
     // copy bits
@@ -131,6 +131,7 @@ func RightShift(value []byte, bits uint, padding uint8)  {
         low := ((value[i+byteNum] & ^(1 << bitNum - 1))) >> bitNum
         value[i] = high | low
     }
+    
 
     // padding
     for i = valueLength - 1; i >= valueLength - byteNum; i-- {
@@ -185,8 +186,10 @@ func Add(a []byte, b []byte) {
 }
 
 func Sub(a []byte, b []byte) {
-    TwosComplement(b)
-    Add(a, b)
+    newB := make([]byte, len(b))
+    copy(newB, b)
+    TwosComplement(newB)
+    Add(a, newB)
 }
 
 func Multiply(a []byte, b []byte) {
@@ -206,7 +209,85 @@ func Multiply(a []byte, b []byte) {
     copy(a, ans)
 }
 
-// TODO : Divide
+func Divide(a []byte, b []byte, signed bool) []byte {
+    quotient := make([]byte, len(a))
+    remainder := make([]byte, len(a))
+    copy(remainder, a)
+    divider := make([]byte, len(b))
+    copy(divider, b)
+    
+    if IsZero(b) {
+        log.Fatal("Divisor cannot be zero.")
+    }
+    if Compare(a, b) < 0 {
+        for i := 0; i < len(a); i++ {
+            a[i] = 0
+        }
+        return remainder
+    }
+
+    var negA, negB bool
+    if signed {
+        negA = IsNegative(a)
+        if negA {
+            TwosComplement(a)
+        }
+        negB = IsNegative(b)
+        if negB {
+            TwosComplement(b)
+        }
+    }
+
+    var dPadding int = 0
+    var rPadding int = 0
+    var count int = len(remainder) * 8
+
+    for count > 0 {
+        count--
+        if (remainder[len(remainder) - 1] & 0x80) != 0 {
+            break
+        }
+        LeftShift(remainder, 1, 0)
+        rPadding++
+    }
+
+    copy(remainder, a)
+    count = len(divider) * 8
+
+    for count > 0 {
+        count--
+        if (divider[len(divider) - 1] & 0x80) != 0 {
+            break
+        }
+        LeftShift(divider, 1, 0)
+        dPadding++
+    }
+    
+    RightShift(divider, uint(rPadding), 0)
+    count = dPadding - rPadding + 1
+
+    for count > 0 {
+        count--
+
+        if Compare(remainder, divider) >= 0 {
+            Sub(remainder, divider)
+            quotient[0] = quotient[0] | 0x01
+        }
+        if count > 0 {
+            LeftShift(quotient, 1, 0)
+            RightShift(divider, 1, 0)
+        }
+    }
+
+    if negA != negB {
+       TwosComplement(quotient)
+    }
+
+    copy(a, quotient)
+    return remainder
+}
+
+// TODO : Mod
 
 func Compare(a []byte, b []byte) int {
     if len(a) == 0 && len(b) == 0 {
