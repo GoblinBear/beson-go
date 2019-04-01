@@ -37,17 +37,10 @@ func NewInt128(s string, base int) RootType {
 
     if neg {
         un.twosComplement(un)
-
-        high := un.high
-        low := un.low
-        newValue.high = high
-        newValue.low = low
-    } else {
-        high := un.high
-        low := un.low
-        newValue.high = high
-        newValue.low = low
     }
+    
+    newValue.high = un.high
+    newValue.low = un.low
 
     return newValue
 }

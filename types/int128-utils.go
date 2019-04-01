@@ -321,7 +321,6 @@ func (value *Int128) toDecimalStringSigned(val *Int128) string {
         var slc []string
         slc = append(slc, strconv.FormatUint(remain.low, 10))
         output = append(slc, output...)
-        
     }
 
     if len(output) == 0 {

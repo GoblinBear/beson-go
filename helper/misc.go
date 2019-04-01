@@ -1,7 +1,6 @@
 package helper
 
 import (
-    "fmt"
     "bytes"
     "encoding/hex"
     "log"
@@ -9,11 +8,9 @@ import (
     "regexp"
 )
 
-var BYTE_MAX byte = 255
-
-func a () {
-    fmt.Println()
-}
+const BYTE_MAX byte = 255
+const DECIMAL_STEPPER byte = 100
+const DECIMAL_STEPPER_LEN int = 2
 
 const HEX_FORMAT_CHECKER string = "^0x[0-9a-fA-F]+$";
 var HEX_MAP_I = map[rune]uint8 {
@@ -23,6 +20,10 @@ var HEX_MAP_I = map[rune]uint8 {
 };
 
 func HexStringToBytes(s string) []byte {
+    if len(s) == 0 {
+        return nil
+    }
+
     isMatch, _ := regexp.MatchString(HEX_FORMAT_CHECKER, s)
     if isMatch {
         s = s[2:]
@@ -36,9 +37,78 @@ func HexStringToBytes(s string) []byte {
     return nil
 }
 
-// TODO : BinaryStringToBytes
+func BinaryStringToBytes(s string) []byte {
+    if len(s) == 0 {
+        return nil
+    }
 
-// TODO : DecimalStringToBytes
+    str := s
+    if len(s) & 7 > 0 {
+        str = paddingZero(s, len(s) + 8 - (len(s) & 7))
+
+    }
+
+    byteNum := len(str) >> 3
+    result := make([]byte, byteNum)
+    
+    for i := byteNum; i > 0; i-- {
+        b, err := strconv.ParseUint(str[i*8-8:i*8], 2, 8)
+        if err != nil {
+            return nil
+        }
+        result[byteNum-i] = byte(b)
+    }
+    return result
+}
+
+func DecimalStringToBytes(s string, size int) []byte {
+    if len(s) == 0 {
+        return nil
+    }
+
+    str := ""
+    neg := false
+    if s[0] == '+' {
+        str = s[1:]
+    } else if s[0] == '-' {
+        neg = true
+        str = s[1:]
+    }
+
+    if len(str) & 1 > 0 {
+        str = "0" + str
+    }
+
+    result := make([]byte, size)
+
+    pow := make([]byte, size)
+    pow[0] = 1
+
+    stepper := make([]byte, size)
+    stepper[0] = byte(DECIMAL_STEPPER)
+
+    anchor := len(str)
+    for anchor > 0 {
+        b, err := strconv.ParseUint(str[anchor - DECIMAL_STEPPER_LEN:anchor], 10, 8)
+        if err != nil {
+            return nil
+        }
+
+        add := make([]byte, size)
+        add[0] = byte(b)
+        
+        Multiply(add, pow)
+        Add(result, add)
+        Multiply(pow, stepper)
+        anchor = anchor - DECIMAL_STEPPER_LEN
+    }
+
+    if neg {
+        TwosComplement(result)
+    }
+
+    return result
+}
 
 func Concat(segments ...[]byte) []byte {
     buffer := bytes.NewBuffer(make([]byte, 0))
@@ -171,7 +241,7 @@ func Xor(a []byte, b []byte) {
 func Add(a []byte, b []byte) {
     var carry, nextCarry byte = 0, 0
     for i := 0; i < len(a); i++ {
-        if i < len(b) && a[i] > BYTE_MAX - b[i] - carry {
+        if i < len(b) && ((a[i] > BYTE_MAX - b[i] - carry) || (b[i] > BYTE_MAX - a[i] - carry)) {
             nextCarry = 1
         } else {
             nextCarry = 0
@@ -268,7 +338,6 @@ func Divide(a []byte, b []byte, signed bool) []byte {
 
     for count > 0 {
         count--
-
         if Compare(remainder, divider) >= 0 {
             Sub(remainder, divider)
             quotient[0] = quotient[0] | 0x01
@@ -286,8 +355,6 @@ func Divide(a []byte, b []byte, signed bool) []byte {
     copy(a, quotient)
     return remainder
 }
-
-// TODO : Mod
 
 func Compare(a []byte, b []byte) int {
     if len(a) == 0 && len(b) == 0 {
@@ -347,6 +414,10 @@ func TwosComplement(value []byte) {
 
 func ToBinaryString(value []byte) string {
     str := ""
+    if len(value) == 0 {
+        return str
+    }
+
     for i := len(value) - 1; i >= 0; i-- {
         subStr := strconv.FormatUint(uint64(value[i]), 2)
         str = str + paddingZero(subStr, 8)
@@ -356,6 +427,10 @@ func ToBinaryString(value []byte) string {
 
 func ToHexString(value []byte) string {
     str := ""
+    if len(value) == 0 {
+        return str
+    }
+    
     for i := len(value) - 1; i >= 0; i-- {
         subStr := strconv.FormatUint(uint64(value[i]), 16)
         str = str + paddingZero(subStr, 2)
@@ -363,7 +438,48 @@ func ToHexString(value []byte) string {
     return str
 }
 
-// TODO : ToDecimalString(value []byte, signed bool)
+func ToDecimalString(value []byte, signed bool) string {
+    if len(value) == 0 {
+        return ""
+    }
+    var output []string
+
+    stepper := make([]byte, len(value))
+    stepper[0] = byte(DECIMAL_STEPPER)
+
+    quotient := make([]byte, len(value))
+    copy(quotient, value)
+
+    neg := IsNegative(quotient)
+    if signed && neg {
+        TwosComplement(quotient)
+    }
+
+    for !IsZero(quotient) {
+        remain := Divide(quotient, stepper, false)
+        var slc []string
+        slc = append(slc, strconv.FormatUint(uint64(remain[0]), 10))
+        output = append(slc, output...)
+    }
+
+    if len(output) == 0 {
+        return "0"
+    }
+
+    var str string
+    if signed && neg {
+        str = "-"
+    } else {
+        str = ""
+    }
+
+    str = str + output[0]
+    for _, comp := range output [1:] {
+        str = str + paddingZero(comp, DECIMAL_STEPPER_LEN)
+    }
+    
+    return str
+}
 
 func paddingZero(data string, length int) string {
     zeros := length - len(data)
