@@ -399,7 +399,7 @@ func (value *UInt128) toBinaryString(val *UInt128) string {
     }
 
     strHigh := strconv.FormatUint(val.high, 2)
-    str := strHigh + paddingZero(strLow, 64);
+    str := strHigh + paddingZero(strLow, 64)
 
     return str
 }
@@ -411,7 +411,7 @@ func (value *UInt128) toHexString(val *UInt128) string {
     }
 
     strHigh := strconv.FormatUint(val.high, 16)
-    str := strHigh + paddingZero(strLow, 16);
+    str := strHigh + paddingZero(strLow, 16)
 
     return str
 }

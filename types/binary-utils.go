@@ -144,6 +144,7 @@ func (bin *Binary) compare(a []byte, b []byte, align bool) int {
     return 0
 }
 
+// bug
 func (bin *Binary) leftShift(value []byte, bits uint, padding uint8) {
     valueLength := uint(len(value))
 
