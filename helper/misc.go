@@ -13,11 +13,12 @@ const DECIMAL_STEPPER byte = 100
 const DECIMAL_STEPPER_LEN int = 2
 const HEX_FORMAT_CHECKER string = "^0x[0-9a-fA-F]+$";
 
-func HexStringToBytes(s string) []byte {
+func HexStringToBytes(s string, size int) []byte {
     if len(s) == 0 {
         return nil
     }
 
+    result := make([]byte, size)
     isMatch, _ := regexp.MatchString(HEX_FORMAT_CHECKER, s)
     if isMatch {
         s = s[2:]
@@ -26,12 +27,18 @@ func HexStringToBytes(s string) []byte {
             log.Fatal(err)
             return nil
         }
-        return decoded
+
+        // convert to little endian
+        reverse(decoded)
+        copy(result, decoded)
+        return result
     }
+
+    log.Fatal("Input string must beginning with '0x'.")
     return nil
 }
 
-func BinaryStringToBytes(s string) []byte {
+func BinaryStringToBytes(s string, size int) []byte {
     if len(s) == 0 {
         return nil
     }
@@ -42,7 +49,7 @@ func BinaryStringToBytes(s string) []byte {
     }
 
     byteNum := len(str) >> 3
-    result := make([]byte, byteNum)
+    result := make([]byte, size)
     
     for i := byteNum; i > 0; i-- {
         b, err := strconv.ParseUint(str[i*8-8:i*8], 2, 8)
@@ -509,4 +516,10 @@ func max(a int, b int) int {
         return b
     }
     return a
+}
+
+func reverse(bs []byte) {
+	for i, j := 0, len(bs)-1; i < j; i, j = i+1, j-1 {
+		bs[i], bs[j] = bs[j], bs[i]
+	}
 }
