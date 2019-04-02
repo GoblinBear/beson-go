@@ -163,11 +163,80 @@ func TestXor(t *testing.T) {
 func testXorFunc(a []byte, b []byte, expect []byte) func(*testing.T) {  
     return func(t *testing.T) {
         Xor(a, b)
-        fmt.Println(a, expect)
         if reflect.DeepEqual(a, expect) {
             t.Log("Xor test passed.")
         } else {
             t.Error("Xor test failed.")
+        }
+    }
+}
+
+func TestAdd(t *testing.T) {
+    t.Run("size4", testAddFunc([]byte{ 204, 19, 240, 255 }, []byte{ 110, 10, 252, 24 }, []byte{ 58, 30, 236, 24 }))
+}
+
+func testAddFunc(a []byte, b []byte, expect []byte) func(*testing.T) {  
+    return func(t *testing.T) {
+        Add(a, b)
+        if reflect.DeepEqual(a, expect) {
+            t.Log("Add test passed.")
+        } else {
+            t.Error("Add test failed.")
+        }
+    }
+}
+
+func TestSub(t *testing.T) {
+    t.Run("size4", testSubFunc([]byte{ 204, 19, 240, 255 }, []byte{ 110, 10, 252, 24 }, []byte{ 94, 9, 244, 230 }))
+}
+
+func testSubFunc(a []byte, b []byte, expect []byte) func(*testing.T) {  
+    return func(t *testing.T) {
+        Sub(a, b)
+        if reflect.DeepEqual(a, expect) {
+            t.Log("Sub test passed.")
+        } else {
+            t.Error("Sub test failed.")
+        }
+    }
+}
+
+func TestMultiply(t *testing.T) {
+    t.Run("size4", testMultiplyFunc([]byte{ 204, 19, 46, 255 }, []byte{ 117, 10, 68, 47 }, []byte{ 60, 4, 5, 35 }))    
+    t.Run("size8", testMultiplyFunc([]byte{ 204, 19, 46, 255, 0, 0, 0, 0 }, []byte{ 117, 10, 68, 47 }, []byte{ 60, 4, 5, 35, 76, 72, 29, 47 }))
+}
+
+func testMultiplyFunc(a []byte, b []byte, expect []byte) func(*testing.T) {  
+    return func(t *testing.T) {
+        Multiply(a, b)
+        if reflect.DeepEqual(a, expect) {
+            t.Log("Multiply test passed.")
+        } else {
+            t.Error("Multiply test failed.")
+        }
+    }
+}
+
+func TestDivide(t *testing.T) {    
+    t.Run("divisible", testDivideFunc([]byte{ 60, 4, 5, 35, 76, 72, 29, 47 }, []byte{ 204, 19, 46, 255, 0, 0, 0, 0 }, false, []byte{ 117, 10, 68, 47, 0, 0, 0, 0 }, []byte{ 0, 0, 0, 0, 0, 0, 0, 0 }))
+    t.Run("indivisible", testDivideFunc([]byte{ 213, 220, 5, 35, 76, 72, 29, 47 }, []byte{ 204, 19, 46, 255, 0, 0, 0, 0 }, false, []byte{ 117, 10, 68, 47, 0, 0, 0, 0 }, []byte{ 153, 216, 0, 0, 0, 0, 0, 0 }))
+    t.Run("zero_dividend", testDivideFunc([]byte{ 0, 0, 0, 0, 0, 0, 0, 0 }, []byte{ 204, 19, 46, 255, 0, 0, 0, 0 }, false, []byte{ 0, 0, 0, 0, 0, 0, 0, 0 }, []byte{ 0, 0, 0, 0, 0, 0, 0, 0 }))
+    t.Run("divisible_neg", testDivideFunc([]byte{ 196, 251, 250, 220, 179, 183, 226, 208 }, []byte{ 204, 19, 46, 255, 0, 0, 0, 0 }, true, []byte{ 139, 245, 187, 208, 255, 255, 255, 255 }, []byte{ 0, 0, 0, 0, 0, 0, 0, 0 }))  
+}
+
+func testDivideFunc(a []byte, b []byte, signed bool, expectQuotient []byte, expectRemainder []byte) func(*testing.T) {  
+    return func(t *testing.T) {
+        remainder := Divide(a, b, signed)
+        fmt.Println(a, remainder)
+        if reflect.DeepEqual(a, expectQuotient) {
+            t.Log("Divide test passed.")
+        } else {
+            t.Error("Divide test failed.")
+        }
+        if reflect.DeepEqual(remainder, expectRemainder) {
+            t.Log("Divide test passed.")
+        } else {
+            t.Error("Divide test failed.")
         }
     }
 }
