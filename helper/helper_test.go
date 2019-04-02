@@ -1,7 +1,6 @@
 package helper
 
 import (
-    "fmt"
     "reflect"
     "testing"
 )
@@ -227,7 +226,6 @@ func TestDivide(t *testing.T) {
 func testDivideFunc(a []byte, b []byte, signed bool, expectQuotient []byte, expectRemainder []byte) func(*testing.T) {  
     return func(t *testing.T) {
         remainder := Divide(a, b, signed)
-        fmt.Println(a, remainder)
         if reflect.DeepEqual(a, expectQuotient) {
             t.Log("Divide test passed.")
         } else {
