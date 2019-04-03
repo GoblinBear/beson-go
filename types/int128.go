@@ -298,7 +298,7 @@ func (value *Int128) MAX() *Int128 {
 func (value *Int128) MIN() *Int128 {
     newValue := &Int128 {
         high: 0x8000000000000000,
-        low: 0x8000000000000000,
+        low: 0,
     }
 
     return newValue;

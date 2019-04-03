@@ -61,7 +61,7 @@ func testToUInt256Func(value interface{}, expect *UInt256) func(*testing.T) {
     }
 }
 
-func TestLShift(t *testing.T) {
+func TestLShift_UInt256(t *testing.T) {
     value := &UInt256 {
         bs: []byte{ 214, 48, 213, 181, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
     }
@@ -70,10 +70,10 @@ func TestLShift(t *testing.T) {
         bs: []byte{ 0, 192, 26, 166, 186, 22, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
     }
 
-    t.Run("", testLShiftFunc(value, 13, expect))
+    t.Run("", testLShiftFunc_UInt256(value, 13, expect))
 }
 
-func testLShiftFunc(value *UInt256, bits uint, expect *UInt256) func(*testing.T) {  
+func testLShiftFunc_UInt256(value *UInt256, bits uint, expect *UInt256) func(*testing.T) {  
     return func(t *testing.T) {
         actual := value.LShift(bits)
         if reflect.DeepEqual(actual.Get(), expect.Get()) {
@@ -84,7 +84,7 @@ func testLShiftFunc(value *UInt256, bits uint, expect *UInt256) func(*testing.T)
     }
 }
 
-func TestRShift(t *testing.T) {
+func TestRShift_UInt256(t *testing.T) {
     value := &UInt256 {
         bs: []byte{ 214, 48, 213, 181, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
     }
@@ -92,10 +92,10 @@ func TestRShift(t *testing.T) {
         bs: []byte{ 169, 174, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
     }
 
-    t.Run("", testRShiftFunc(value, 13, expect))
+    t.Run("", testRShiftFunc_UInt256(value, 13, expect))
 }
 
-func testRShiftFunc(value *UInt256, bits uint, expect *UInt256) func(*testing.T) {  
+func testRShiftFunc_UInt256(value *UInt256, bits uint, expect *UInt256) func(*testing.T) {  
     return func(t *testing.T) {
         actual := value.RShift(bits)
         if reflect.DeepEqual(actual.Get(), expect.Get()) {
@@ -106,7 +106,7 @@ func testRShiftFunc(value *UInt256, bits uint, expect *UInt256) func(*testing.T)
     }
 }
 
-func TestNot(t *testing.T) {
+func TestNot_UInt256(t *testing.T) {
     value := &UInt256 {
         bs: []byte{ 92, 54, 161, 228, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
     }
@@ -114,10 +114,10 @@ func TestNot(t *testing.T) {
         bs: []byte{ 163, 201, 94, 27, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255 },
     }
 
-    t.Run("", testNotFunc(value, expect))
+    t.Run("", testNotFunc_UInt256(value, expect))
 }
 
-func testNotFunc(value *UInt256, expect *UInt256) func(*testing.T) {  
+func testNotFunc_UInt256(value *UInt256, expect *UInt256) func(*testing.T) {  
     return func(t *testing.T) {
         actual := value.Not()
         if reflect.DeepEqual(actual.Get(), expect.Get()) {
@@ -128,7 +128,7 @@ func testNotFunc(value *UInt256, expect *UInt256) func(*testing.T) {
     }
 }
 
-func TestAnd(t *testing.T) {
+func TestAnd_UInt256(t *testing.T) {
     a := &UInt256 {
         bs: []byte{ 92, 54, 161, 228, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
     }
@@ -139,10 +139,10 @@ func TestAnd(t *testing.T) {
         bs: []byte{ 16, 2, 160, 68, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
     }
 
-    t.Run("", testAndFunc(a, b, expect))
+    t.Run("", testAndFunc_UInt256(a, b, expect))
 }
 
-func testAndFunc(a *UInt256, b *UInt256, expect *UInt256) func(*testing.T) {  
+func testAndFunc_UInt256(a *UInt256, b *UInt256, expect *UInt256) func(*testing.T) {  
     return func(t *testing.T) {
         actual := a.And(b)
         if reflect.DeepEqual(actual.Get(), expect.Get()) {
@@ -153,7 +153,7 @@ func testAndFunc(a *UInt256, b *UInt256, expect *UInt256) func(*testing.T) {
     }
 }
 
-func TestOr(t *testing.T) {
+func TestOr_UInt256(t *testing.T) {
     a := &UInt256 {
         bs: []byte{ 92, 54, 161, 228, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
     }
@@ -164,10 +164,10 @@ func TestOr(t *testing.T) {
         bs: []byte{ 125, 63, 187, 228, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
     }
 
-    t.Run("", testOrFunc(a, b, expect))
+    t.Run("", testOrFunc_UInt256(a, b, expect))
 }
 
-func testOrFunc(a *UInt256, b *UInt256, expect *UInt256) func(*testing.T) {  
+func testOrFunc_UInt256(a *UInt256, b *UInt256, expect *UInt256) func(*testing.T) {  
     return func(t *testing.T) {
         actual := a.Or(b)
         if reflect.DeepEqual(actual.Get(), expect.Get()) {
@@ -178,7 +178,7 @@ func testOrFunc(a *UInt256, b *UInt256, expect *UInt256) func(*testing.T) {
     }
 }
 
-func TestXor(t *testing.T) {
+func TestXor_UInt256(t *testing.T) {
     a := &UInt256 {
         bs: []byte{ 92, 54, 161, 228, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
     }
@@ -189,10 +189,10 @@ func TestXor(t *testing.T) {
         bs: []byte{ 109, 61, 27, 160, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
     }
 
-    t.Run("", testXorFunc(a, b, expect))
+    t.Run("", testXorFunc_UInt256(a, b, expect))
 }
 
-func testXorFunc(a *UInt256, b *UInt256, expect *UInt256) func(*testing.T) {  
+func testXorFunc_UInt256(a *UInt256, b *UInt256, expect *UInt256) func(*testing.T) {  
     return func(t *testing.T) {
         actual := a.Xor(b)
         if reflect.DeepEqual(actual.Get(), expect.Get()) {
@@ -203,7 +203,7 @@ func testXorFunc(a *UInt256, b *UInt256, expect *UInt256) func(*testing.T) {
     }
 }
 
-func TestAdd(t *testing.T) {
+func TestAdd_UInt256(t *testing.T) {
     a := &UInt256 {
         bs: []byte{ 204, 19, 240, 255, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
     }
@@ -214,10 +214,10 @@ func TestAdd(t *testing.T) {
         bs: []byte{ 58, 30, 236, 24, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
     }
 
-    t.Run("", testAddFunc(a, b, expect))
+    t.Run("", testAddFunc_UInt256(a, b, expect))
 }
 
-func testAddFunc(a *UInt256, b *UInt256, expect *UInt256) func(*testing.T) {  
+func testAddFunc_UInt256(a *UInt256, b *UInt256, expect *UInt256) func(*testing.T) {  
     return func(t *testing.T) {
         actual := a.Add(b)
         if reflect.DeepEqual(actual.Get(), expect.Get()) {
@@ -228,7 +228,7 @@ func testAddFunc(a *UInt256, b *UInt256, expect *UInt256) func(*testing.T) {
     }
 }
 
-func TestSub(t *testing.T) {
+func TestSub_UInt256(t *testing.T) {
     a := &UInt256 {
         bs: []byte{ 204, 19, 240, 255, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
     }
@@ -239,10 +239,10 @@ func TestSub(t *testing.T) {
         bs: []byte{ 94, 9, 244, 230, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
     }
 
-    t.Run("", testSubFunc(a, b, expect))
+    t.Run("", testSubFunc_UInt256(a, b, expect))
 }
 
-func testSubFunc(a *UInt256, b *UInt256, expect *UInt256) func(*testing.T) {  
+func testSubFunc_UInt256(a *UInt256, b *UInt256, expect *UInt256) func(*testing.T) {  
     return func(t *testing.T) {
         actual := a.Sub(b)
         if reflect.DeepEqual(actual.Get(), expect.Get()) {
@@ -253,7 +253,7 @@ func testSubFunc(a *UInt256, b *UInt256, expect *UInt256) func(*testing.T) {
     }
 }
 
-func TestMultiply(t *testing.T) {
+func TestMultiply_UInt256(t *testing.T) {
     a := &UInt256 {
         bs: []byte{ 204, 19, 46, 255, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
     }
@@ -264,10 +264,10 @@ func TestMultiply(t *testing.T) {
         bs: []byte{ 60, 4, 5, 35, 76, 72, 29, 47, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
     }
 
-    t.Run("", testMultiplyFunc(a, b, expect))
+    t.Run("", testMultiplyFunc_UInt256(a, b, expect))
 }
 
-func testMultiplyFunc(a *UInt256, b *UInt256, expect *UInt256) func(*testing.T) {  
+func testMultiplyFunc_UInt256(a *UInt256, b *UInt256, expect *UInt256) func(*testing.T) {  
     return func(t *testing.T) {
         actual := a.Multiply(b)
         if reflect.DeepEqual(actual.Get(), expect.Get()) {
@@ -278,7 +278,7 @@ func testMultiplyFunc(a *UInt256, b *UInt256, expect *UInt256) func(*testing.T) 
     }
 }
 
-func TestDivide(t *testing.T) {
+func TestDivide_UInt256(t *testing.T) {
     a := &UInt256 {
         bs: []byte{ 60, 4, 5, 35, 76, 72, 29, 47, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
     }
@@ -289,10 +289,10 @@ func TestDivide(t *testing.T) {
         bs: []byte{ 117, 10, 68, 47, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
     }
 
-    t.Run("", testDivideFunc(a, b, expect))
+    t.Run("", testDivideFunc_UInt256(a, b, expect))
 }
 
-func testDivideFunc(a *UInt256, b *UInt256, expect *UInt256) func(*testing.T) {  
+func testDivideFunc_UInt256(a *UInt256, b *UInt256, expect *UInt256) func(*testing.T) {  
     return func(t *testing.T) {
         actual := a.Divide(b)
         if reflect.DeepEqual(actual.Get(), expect.Get()) {
@@ -303,7 +303,7 @@ func testDivideFunc(a *UInt256, b *UInt256, expect *UInt256) func(*testing.T) {
     }
 }
 
-func TestModulo(t *testing.T) {
+func TestModulo_UInt256(t *testing.T) {
     a := &UInt256 {
         bs: []byte{ 60, 4, 5, 35, 76, 72, 29, 47, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
     }
@@ -314,10 +314,10 @@ func TestModulo(t *testing.T) {
         bs: []byte{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
     }
 
-    t.Run("", testModuloFunc(a, b, expect))
+    t.Run("", testModuloFunc_UInt256(a, b, expect))
 }
 
-func testModuloFunc(a *UInt256, b *UInt256, expect *UInt256) func(*testing.T) {  
+func testModuloFunc_UInt256(a *UInt256, b *UInt256, expect *UInt256) func(*testing.T) {  
     return func(t *testing.T) {
         actual := a.Modulo(b)
         if reflect.DeepEqual(actual.Get(), expect.Get()) {
@@ -328,7 +328,7 @@ func testModuloFunc(a *UInt256, b *UInt256, expect *UInt256) func(*testing.T) {
     }
 }
 
-func TestCompare(t *testing.T) {
+func TestCompare_UInt256(t *testing.T) {
     a := &UInt256 {
         bs: []byte{ 60, 4, 5, 35, 76, 72, 29, 47, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
     }
@@ -337,10 +337,10 @@ func TestCompare(t *testing.T) {
     }
     expect := 1
 
-    t.Run("", testCompareFunc(a, b, expect))
+    t.Run("", testCompareFunc_UInt256(a, b, expect))
 }
 
-func testCompareFunc(a *UInt256, b *UInt256, expect int) func(*testing.T) {  
+func testCompareFunc_UInt256(a *UInt256, b *UInt256, expect int) func(*testing.T) {  
     return func(t *testing.T) {
         actual := a.Compare(b)
         if actual == expect {
@@ -351,16 +351,16 @@ func testCompareFunc(a *UInt256, b *UInt256, expect int) func(*testing.T) {
     }
 }
 
-func TestIsZero(t *testing.T) {
+func TestIsZero_UInt256(t *testing.T) {
     value := &UInt256 {
         bs: []byte{ 60, 4, 5, 35, 76, 72, 29, 47, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
     }
     expect := false
 
-    t.Run("", testIsZeroFunc(value, expect))
+    t.Run("", testIsZeroFunc_UInt256(value, expect))
 }
 
-func testIsZeroFunc(value *UInt256, expect bool) func(*testing.T) {  
+func testIsZeroFunc_UInt256(value *UInt256, expect bool) func(*testing.T) {  
     return func(t *testing.T) {
         actual := value.IsZero()
         if actual == expect {
@@ -371,17 +371,17 @@ func testIsZeroFunc(value *UInt256, expect bool) func(*testing.T) {
     }
 }
 
-func TestToString(t *testing.T) {
+func TestToString_UInt256(t *testing.T) {
     value := &UInt256 {
         bs: []byte{ 57, 116, 79, 149, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
     }
 
-    t.Run("base2", testToStringFunc(value, 2, "0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000010010101010011110111010000111001"))
-    t.Run("base10", testToStringFunc(value, 10, "2505012281"))
-    t.Run("base16", testToStringFunc(value, 16, "00000000000000000000000000000000000000000000000000000000954f7439"))
+    t.Run("base2", testToStringFunc_UInt256(value, 2, "0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000010010101010011110111010000111001"))
+    t.Run("base10", testToStringFunc_UInt256(value, 10, "2505012281"))
+    t.Run("base16", testToStringFunc_UInt256(value, 16, "00000000000000000000000000000000000000000000000000000000954f7439"))
 }
 
-func testToStringFunc(value *UInt256, base int, expect string) func(*testing.T) {  
+func testToStringFunc_UInt256(value *UInt256, base int, expect string) func(*testing.T) {  
     return func(t *testing.T) {
         actual, _ := value.ToString(base)
         if actual == expect {
@@ -392,15 +392,15 @@ func testToStringFunc(value *UInt256, base int, expect string) func(*testing.T) 
     }
 }
 
-func TestToBytes(t *testing.T) {
+func TestToBytes_UInt256(t *testing.T) {
     value := &UInt256 {
         bs: []byte{ 57, 116, 79, 149, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
     }
 
-    t.Run("", testToBytesFunc(value, value.bs))
+    t.Run("", testToBytesFunc_UInt256(value, value.bs))
 }
 
-func testToBytesFunc(value *UInt256, expect []byte) func(*testing.T) {  
+func testToBytesFunc_UInt256(value *UInt256, expect []byte) func(*testing.T) {  
     return func(t *testing.T) {
         actual := value.ToBytes()
         if reflect.DeepEqual(actual, expect) {
