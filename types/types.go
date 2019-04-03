@@ -67,59 +67,118 @@ type Map struct {
 
 /* Type initializer */
 
-func NewUInt8(value uint8) RootType {
+func NewUInt8(value uint8) *UInt8 {
+    return newUInt8(value).(*UInt8)
+}
+
+func NewUInt16(value uint16) *UInt16 {
+    return newUInt16(value).(*UInt16)
+}
+
+func NewUInt32(value uint32) *UInt32 {
+    return newUInt32(value).(*UInt32)
+}
+
+func NewUInt64(value uint64) *UInt64 {
+    return newUInt64(value).(*UInt64)
+}
+
+func NewInt8(value int8) *Int8 {
+    return newInt8(value).(*Int8)
+}
+
+func NewInt16(value int16) *Int16 {
+    return newInt16(value).(*Int16)
+}
+
+func NewInt32(value int32) *Int32 {
+    return newInt32(value).(*Int32)
+}
+
+func NewInt64(value int64) *Int64 {
+    return newInt64(value).(*Int64)
+}
+
+func NewFloat32(value float32) *Float32 {
+    return newFloat32(value).(*Float32)
+}
+
+func NewFloat64(value float64) *Float64 {
+    return newFloat64(value).(*Float64)
+}
+
+func NewBool(value bool) *Bool {
+    return newBool(value).(*Bool)
+}
+
+func NewString(value string) *String {
+    return newString(value).(*String)
+}
+
+func NewSlice(value []RootType) *Slice {
+    return newSlice(value).(*Slice)
+}
+
+func NewMap(value map[string]RootType) *Map {
+    return newMap(value).(*Map)
+}
+
+
+/* Initialize type to RootType */
+
+func newUInt8(value uint8) RootType {
     return &UInt8 { value }
 }
 
-func NewUInt16(value uint16) RootType {
+func newUInt16(value uint16) RootType {
     return &UInt16 { value }
 }
 
-func NewUInt32(value uint32) RootType {
+func newUInt32(value uint32) RootType {
     return &UInt32 { value }
 }
 
-func NewUInt64(value uint64) RootType {
+func newUInt64(value uint64) RootType {
     return &UInt64 { value }
 }
 
-func NewInt8(value int8) RootType {
+func newInt8(value int8) RootType {
     return &Int8 { value }
 }
 
-func NewInt16(value int16) RootType {
+func newInt16(value int16) RootType {
     return &Int16 { value }
 }
 
-func NewInt32(value int32) RootType {
+func newInt32(value int32) RootType {
     return &Int32 { value }
 }
 
-func NewInt64(value int64) RootType {
+func newInt64(value int64) RootType {
     return &Int64 { value }
 }
 
-func NewFloat32(value float32) RootType {
+func newFloat32(value float32) RootType {
     return &Float32 { value }
 }
 
-func NewFloat64(value float64) RootType {
+func newFloat64(value float64) RootType {
     return &Float64 { value }
 }
 
-func NewBool(value bool) RootType {
+func newBool(value bool) RootType {
     return &Bool { value }
 }
 
-func NewString(value string) RootType {
+func newString(value string) RootType {
     return &String { value }
 }
 
-func NewSlice(value []RootType) RootType {
+func newSlice(value []RootType) RootType {
     return &Slice { value }
 }
 
-func NewMap(value map[string]RootType) RootType {
+func newMap(value map[string]RootType) RootType {
     return &Map { value }
 }
 

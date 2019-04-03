@@ -211,7 +211,6 @@ func (value *UInt128) ZERO() *UInt128 {
         high: 0,
         low: 0,
     }
-
     return newValue;
 }
 
@@ -220,6 +219,5 @@ func (value *UInt128) MAX() *UInt128 {
         high: 0xFFFFFFFFFFFFFFFF,
         low: 0xFFFFFFFFFFFFFFFF,
     }
-
     return newValue;
 }
