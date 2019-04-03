@@ -15,8 +15,8 @@ func NewUInt256(s string, base int) *UInt256 {
 }
 
 func newUInt256(s string, base int) RootType {
-	var bs []byte
-	switch base {
+    var bs []byte
+    switch base {
     case 2:
         bs = helper.BinaryStringToBytes(s, 32)
     case 10:
@@ -25,9 +25,9 @@ func newUInt256(s string, base int) RootType {
         bs = helper.HexStringToBytes(s, 32)
     default:
         bs = helper.DecimalStringToBytes(s, 32)
-	}
-	
-	newValue := &UInt256 {
+    }
+    
+    newValue := &UInt256 {
         bs: bs,
     }
     return newValue
@@ -39,24 +39,24 @@ func ToUInt256(value interface{}) *UInt256 {
 
 // TODO: UInt128 to UInt256
 func toUInt256(value interface{}) RootType {
-	var bs []byte
-	switch value.(type) {
-	case *UInt8:
-		v := uint64(value.(*UInt8).Get())
+    var bs []byte
+    switch value.(type) {
+    case *UInt8:
+        v := uint64(value.(*UInt8).Get())
         bs = uintToBytes(v, 1)
-	case *UInt16:
-		v := uint64(value.(*UInt16).Get())
+    case *UInt16:
+        v := uint64(value.(*UInt16).Get())
         bs = uintToBytes(v, 2)
-	case *UInt32:
-		v := uint64(value.(*UInt32).Get())
+    case *UInt32:
+        v := uint64(value.(*UInt32).Get())
         bs = uintToBytes(v, 4)
-	case *UInt64:
-		v := value.(*UInt64).Get()
+    case *UInt64:
+        v := value.(*UInt64).Get()
         bs = uintToBytes(v, 8)
     default:
         return nil
     }
-	newValue := &UInt256 {
+    newValue := &UInt256 {
         bs: bs,
     }
     return newValue
@@ -236,12 +236,12 @@ func (value *UInt256) MAX() *UInt256 {
 }
 
 func uintToBytes(value uint64, byteNum int) []byte {
-	var mask uint64 = 1 << 8 - 1
-	bs := make([]byte, 32)
-	
-	for i := 0; i < byteNum; i++ {
-		bs[i] = byte((value & mask) >> uint(i * 8))
-		mask = mask << 8
-	}
-	return bs
+    var mask uint64 = 1 << 8 - 1
+    bs := make([]byte, 32)
+    
+    for i := 0; i < byteNum; i++ {
+        bs[i] = byte((value & mask) >> uint(i * 8))
+        mask = mask << 8
+    }
+    return bs
 }
