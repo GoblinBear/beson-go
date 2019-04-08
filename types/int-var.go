@@ -6,15 +6,15 @@ import (
     "beson/helper"
 )
 
-type UIntVar struct {
+type IntVar struct {
     bs []byte
 }
 
-func NewUIntVar(s string, base int, size int) *UIntVar {
-    return newUIntVar(s, base, size).(*UIntVar)
+func NewIntVar(s string, base int, size int) *IntVar {
+    return newIntVar(s, base, size).(*IntVar)
 }
 
-func newUIntVar(s string, base int, size int) RootType {
+func newIntVar(s string, base int, size int) RootType {
     var bs []byte
     switch base {
     case 2:
@@ -27,174 +27,192 @@ func newUIntVar(s string, base int, size int) RootType {
         bs = helper.DecimalStringToBytes(s, size)
     }
     
-    newValue := &UIntVar {
+    newValue := &IntVar {
         bs: bs,
     }
     return newValue
 }
 
-func ToUIntVar(value interface{}, size int) *UIntVar {
-    return toUIntVar(value, size).(*UIntVar)
+func ToIntVar(value interface{}, size int) *IntVar {
+    return toIntVar(value, size).(*IntVar)
 }
 
-// TODO: UInt128 to UIntVar
-func toUIntVar(value interface{}, size int) RootType {
+// TODO: Int128 to IntVar
+func toIntVar(value interface{}, size int) RootType {
     var bs []byte
     switch value.(type) {
-    case *UInt8:
-        v := uint64(value.(*UInt8).Get())
-        bs = uintToVarBytes(v, 1, size)
-    case *UInt16:
-        v := uint64(value.(*UInt16).Get())
-        bs = uintToVarBytes(v, 2, size)
-    case *UInt32:
-        v := uint64(value.(*UInt32).Get())
-        bs = uintToVarBytes(v, 4, size)
-    case *UInt64:
-        v := value.(*UInt64).Get()
-        bs = uintToVarBytes(v, 8, size)
+    case *Int8:
+        v := int64(value.(*Int8).Get())
+        bs = intToVarBytes(v, 1, size)
+    case *Int16:
+        v := int64(value.(*Int16).Get())
+        bs = intToVarBytes(v, 2, size)
+    case *Int32:
+        v := int64(value.(*Int32).Get())
+        bs = intToVarBytes(v, 4, size)
+    case *Int64:
+        v := value.(*Int64).Get()
+        bs = intToVarBytes(v, 8, size)
     default:
         return nil
     }
-    newValue := &UIntVar {
+    newValue := &IntVar {
         bs: bs,
     }
     return newValue
 }
 
-func (value *UIntVar) Get() []byte {
+func (value *IntVar) Get() []byte {
     bs := make([]byte, len(value.bs))
     copy(bs, value.bs)
     return bs
 }
 
-func (value *UIntVar) LShift(bits uint) *UIntVar {
+func (value *IntVar) LShift(bits uint) *IntVar {
     newBytes := make([]byte, len(value.bs))
     copy(newBytes, value.bs)
-    newValue := &UIntVar {
+    newValue := &IntVar {
         bs: newBytes,
     }
     helper.LeftShift(newValue.bs, bits, 0)
     return newValue
 }
 
-func (value *UIntVar) RShift(bits uint) *UIntVar {
+func (value *IntVar) RShift(bits uint) *IntVar {
     newBytes := make([]byte, len(value.bs))
     copy(newBytes, value.bs)
-    newValue := &UIntVar {
+    newValue := &IntVar {
         bs: newBytes,
     }
-    helper.RightShift(newValue.bs, bits, 0)
+
+    var padding uint8 = 0
+    if helper.IsNegative(newValue.bs) {
+        padding = 1
+    }
+
+    helper.RightShift(newValue.bs, bits, padding)
     return newValue
 }
 
-func (value *UIntVar) Not() *UIntVar {
+func (value *IntVar) Not() *IntVar {
     newBytes := make([]byte, len(value.bs))
     copy(newBytes, value.bs)
-    newValue := &UIntVar {
+    newValue := &IntVar {
         bs: newBytes,
     }
     helper.Not(newValue.bs)
     return newValue
 }
 
-func (value *UIntVar) Or(val *UIntVar) *UIntVar {
+func (value *IntVar) Or(val *IntVar) *IntVar {
     newBytes := make([]byte, len(value.bs))
     copy(newBytes, value.bs)
-    newValue := &UIntVar {
+    newValue := &IntVar {
         bs: newBytes,
     }
     helper.Or(newValue.bs, val.bs)
     return newValue
 }
 
-func (value *UIntVar) And(val *UIntVar) *UIntVar {
+func (value *IntVar) And(val *IntVar) *IntVar {
     newBytes := make([]byte, len(value.bs))
     copy(newBytes, value.bs)
-    newValue := &UIntVar {
+    newValue := &IntVar {
         bs: newBytes,
     }
     helper.And(newValue.bs, val.bs)
     return newValue
 }
 
-func (value *UIntVar) Xor(val *UIntVar) *UIntVar {
+func (value *IntVar) Xor(val *IntVar) *IntVar {
     newBytes := make([]byte, len(value.bs))
     copy(newBytes, value.bs)
-    newValue := &UIntVar {
+    newValue := &IntVar {
         bs: newBytes,
     }
     helper.Xor(newValue.bs, val.bs)
     return newValue
 }
 
-func (value *UIntVar) Add(val *UIntVar) *UIntVar {
+func (value *IntVar) Add(val *IntVar) *IntVar {
     newBytes := make([]byte, len(value.bs))
     copy(newBytes, value.bs)
-    newValue := &UIntVar {
+    newValue := &IntVar {
         bs: newBytes,
     }
     helper.Add(newValue.bs, val.bs)
     return newValue
 }
 
-func (value *UIntVar) Sub(val *UIntVar) *UIntVar {
+func (value *IntVar) Sub(val *IntVar) *IntVar {
     newBytes := make([]byte, len(value.bs))
     copy(newBytes, value.bs)
-    newValue := &UIntVar {
+    newValue := &IntVar {
         bs: newBytes,
     }
     helper.Sub(newValue.bs, val.bs)
     return newValue
 }
 
-func (value *UIntVar) Multiply(val *UIntVar) *UIntVar {
+func (value *IntVar) Multiply(val *IntVar) *IntVar {
     newBytes := make([]byte, len(value.bs))
     copy(newBytes, value.bs)
-    newValue := &UIntVar {
+    newValue := &IntVar {
         bs: newBytes,
     }
     helper.Multiply(newValue.bs, val.bs)
     return newValue
 }
 
-func (value *UIntVar) Divide(val *UIntVar) *UIntVar {
+func (value *IntVar) Divide(val *IntVar) *IntVar {
     newBytes := make([]byte, len(value.bs))
     copy(newBytes, value.bs)
-    newValue := &UIntVar {
+    newValue := &IntVar {
         bs: newBytes,
     }
-    helper.Divide(newValue.bs, val.bs, false)
+    helper.Divide(newValue.bs, val.bs, true)
     return newValue
 }
 
-func (value *UIntVar) Modulo(val *UIntVar) *UIntVar {
+func (value *IntVar) Modulo(val *IntVar) *IntVar {
     newBytes := make([]byte, len(value.bs))
     copy(newBytes, value.bs)
-    newValue := &UIntVar {
+    newValue := &IntVar {
         bs: newBytes,
     }
-    ans := helper.Divide(newValue.bs, val.bs, false)
-    remainder := &UIntVar {
+    ans := helper.Divide(newValue.bs, val.bs, true)
+    remainder := &IntVar {
         bs: ans,
     }
     return remainder
 }
 
-func (value *UIntVar) Compare(val *UIntVar) int {
-    return helper.Compare(value.bs, val.bs)
+func (value *IntVar) Compare(val *IntVar) int {
+    negA := helper.IsNegative(value.bs)
+    negB := helper.IsNegative(val.bs)
+
+    ans := helper.Compare(value.bs, val.bs)
+    if negA && negB {
+        ans = ans * -1
+    } else if negA && ans != 0 {
+        ans = -1
+    } else if negB && ans != 0 {
+        ans = 1
+    }
+
+    return ans
 }
 
-func (value *UIntVar) IsZero() bool {
+func (value *IntVar) IsZero() bool {
     return helper.IsZero(value.bs)
 }
 
-func (value *UIntVar) ToString(base int) (string, error) {
+func (value *IntVar) ToString(base int) (string, error) {
     switch base {
     case 2:
         return helper.ToBinaryString(value.bs), nil
     case 10:
-        return helper.ToDecimalString(value.bs, false), nil
+        return helper.ToDecimalString(value.bs, true), nil
     case 16:
         return helper.ToHexString(value.bs), nil
     default:
@@ -203,39 +221,53 @@ func (value *UIntVar) ToString(base int) (string, error) {
     return "", nil
 }
 
-func (value *UIntVar) ToBytes() []byte {
+func (value *IntVar) ToBytes() []byte {
     bs := make([]byte, len(value.bs))
     copy(bs, value.bs)
 
     return bs
 }
 
-func (value *UIntVar) IsSigned() bool {
-    return false
+func (value *IntVar) IsSigned() bool {
+    return true
 }
 
-func (value *UIntVar) ZERO() *UIntVar {
+func (value *IntVar) ZERO() *IntVar {
     bs := make([]byte, len(value.bs))
-    newValue := &UIntVar {
+    newValue := &IntVar {
         bs: bs,
     }
     return newValue;
 }
 
-func (value *UIntVar) MAX(size int) *UIntVar {
+func (value *IntVar) MAX(size int) *IntVar {
     bs := make([]byte, size)
-    for i := 0; i < size; i++ {
+    for i := 0; i < size - 1; i++ {
         bs[i] = 0xFF
     }
-    
-    newValue := &UIntVar {
+    bs[size - 1] = 0x7F
+
+    newValue := &IntVar {
         bs: bs,
     }
     return newValue;
 }
 
-func uintToVarBytes(value uint64, byteNum int, size int) []byte {
-    var mask uint64 = 1 << 8 - 1
+func (value *IntVar) MIN(size int) *IntVar {
+    bs := make([]byte, size)
+    for i := 0; i < size - 1; i++ {
+        bs[i] = 0xFF
+    }
+    bs[size - 1] = 0x80
+
+    newValue := &IntVar {
+        bs: bs,
+    }
+    return newValue;
+}
+
+func intToVarBytes(value int64, byteNum int, size int) []byte {
+    var mask int64 = 1 << 8 - 1
     bs := make([]byte, size)
     
     for i := 0; i < byteNum; i++ {
