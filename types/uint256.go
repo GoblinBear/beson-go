@@ -6,6 +6,8 @@ import (
     "beson/helper"
 )
 
+const BYTE_LENGTH_256 int = 32
+
 type UInt256 struct {
     bs []byte
 }
@@ -18,13 +20,13 @@ func newUInt256(s string, base int) RootType {
     var bs []byte
     switch base {
     case 2:
-        bs = helper.BinaryStringToBytes(s, 32)
+        bs = helper.BinaryStringToBytes(s, BYTE_LENGTH_256)
     case 10:
-        bs = helper.DecimalStringToBytes(s, 32)
+        bs = helper.DecimalStringToBytes(s, BYTE_LENGTH_256)
     case 16:
-        bs = helper.HexStringToBytes(s, 32)
+        bs = helper.HexStringToBytes(s, BYTE_LENGTH_256)
     default:
-        bs = helper.DecimalStringToBytes(s, 32)
+        bs = helper.DecimalStringToBytes(s, BYTE_LENGTH_256)
     }
     
     newValue := &UInt256 {
@@ -63,13 +65,13 @@ func toUInt256(value interface{}) RootType {
 }
 
 func (value *UInt256) Get() []byte {
-    bs := make([]byte, 32)
+    bs := make([]byte, BYTE_LENGTH_256)
     copy(bs, value.bs)
     return bs
 }
 
 func (value *UInt256) LShift(bits uint) *UInt256 {
-    newBytes := make([]byte, 32)
+    newBytes := make([]byte, BYTE_LENGTH_256)
     copy(newBytes, value.bs)
     newValue := &UInt256 {
         bs: newBytes,
@@ -79,7 +81,7 @@ func (value *UInt256) LShift(bits uint) *UInt256 {
 }
 
 func (value *UInt256) RShift(bits uint) *UInt256 {
-    newBytes := make([]byte, 32)
+    newBytes := make([]byte, BYTE_LENGTH_256)
     copy(newBytes, value.bs)
     newValue := &UInt256 {
         bs: newBytes,
@@ -89,7 +91,7 @@ func (value *UInt256) RShift(bits uint) *UInt256 {
 }
 
 func (value *UInt256) Not() *UInt256 {
-    newBytes := make([]byte, 32)
+    newBytes := make([]byte, BYTE_LENGTH_256)
     copy(newBytes, value.bs)
     newValue := &UInt256 {
         bs: newBytes,
@@ -99,7 +101,7 @@ func (value *UInt256) Not() *UInt256 {
 }
 
 func (value *UInt256) Or(val *UInt256) *UInt256 {
-    newBytes := make([]byte, 32)
+    newBytes := make([]byte, BYTE_LENGTH_256)
     copy(newBytes, value.bs)
     newValue := &UInt256 {
         bs: newBytes,
@@ -109,7 +111,7 @@ func (value *UInt256) Or(val *UInt256) *UInt256 {
 }
 
 func (value *UInt256) And(val *UInt256) *UInt256 {
-    newBytes := make([]byte, 32)
+    newBytes := make([]byte, BYTE_LENGTH_256)
     copy(newBytes, value.bs)
     newValue := &UInt256 {
         bs: newBytes,
@@ -119,7 +121,7 @@ func (value *UInt256) And(val *UInt256) *UInt256 {
 }
 
 func (value *UInt256) Xor(val *UInt256) *UInt256 {
-    newBytes := make([]byte, 32)
+    newBytes := make([]byte, BYTE_LENGTH_256)
     copy(newBytes, value.bs)
     newValue := &UInt256 {
         bs: newBytes,
@@ -129,7 +131,7 @@ func (value *UInt256) Xor(val *UInt256) *UInt256 {
 }
 
 func (value *UInt256) Add(val *UInt256) *UInt256 {
-    newBytes := make([]byte, 32)
+    newBytes := make([]byte, BYTE_LENGTH_256)
     copy(newBytes, value.bs)
     newValue := &UInt256 {
         bs: newBytes,
@@ -139,7 +141,7 @@ func (value *UInt256) Add(val *UInt256) *UInt256 {
 }
 
 func (value *UInt256) Sub(val *UInt256) *UInt256 {
-    newBytes := make([]byte, 32)
+    newBytes := make([]byte, BYTE_LENGTH_256)
     copy(newBytes, value.bs)
     newValue := &UInt256 {
         bs: newBytes,
@@ -149,7 +151,7 @@ func (value *UInt256) Sub(val *UInt256) *UInt256 {
 }
 
 func (value *UInt256) Multiply(val *UInt256) *UInt256 {
-    newBytes := make([]byte, 32)
+    newBytes := make([]byte, BYTE_LENGTH_256)
     copy(newBytes, value.bs)
     newValue := &UInt256 {
         bs: newBytes,
@@ -159,7 +161,7 @@ func (value *UInt256) Multiply(val *UInt256) *UInt256 {
 }
 
 func (value *UInt256) Divide(val *UInt256) *UInt256 {
-    newBytes := make([]byte, 32)
+    newBytes := make([]byte, BYTE_LENGTH_256)
     copy(newBytes, value.bs)
     newValue := &UInt256 {
         bs: newBytes,
@@ -169,7 +171,7 @@ func (value *UInt256) Divide(val *UInt256) *UInt256 {
 }
 
 func (value *UInt256) Modulo(val *UInt256) *UInt256 {
-    newBytes := make([]byte, 32)
+    newBytes := make([]byte, BYTE_LENGTH_256)
     copy(newBytes, value.bs)
     newValue := &UInt256 {
         bs: newBytes,
@@ -204,7 +206,7 @@ func (value *UInt256) ToString(base int) (string, error) {
 }
 
 func (value *UInt256) ToBytes() []byte {
-    bs := make([]byte, 32)
+    bs := make([]byte, BYTE_LENGTH_256)
     copy(bs, value.bs)
 
     return bs
@@ -215,7 +217,7 @@ func (value *UInt256) IsSigned() bool {
 }
 
 func (value *UInt256) ZERO() *UInt256 {
-    bs := make([]byte, 32)
+    bs := make([]byte, BYTE_LENGTH_256)
     newValue := &UInt256 {
         bs: bs,
     }
@@ -237,7 +239,7 @@ func (value *UInt256) MAX() *UInt256 {
 
 func uintToBytes(value uint64, byteNum int) []byte {
     var mask uint64 = 1 << 8 - 1
-    bs := make([]byte, 32)
+    bs := make([]byte, BYTE_LENGTH_256)
     
     for i := 0; i < byteNum; i++ {
         bs[i] = byte((value & mask) >> uint(i * 8))

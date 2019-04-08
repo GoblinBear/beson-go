@@ -6,82 +6,82 @@ import (
     "beson/helper"
 )
 
-type Int256 struct {
+type Int512 struct {
     bs []byte
 }
 
-func NewInt256(s string, base int) *Int256 {
-    return newInt256(s, base).(*Int256)
+func NewInt512(s string, base int) *Int512 {
+    return newInt512(s, base).(*Int512)
 }
 
-func newInt256(s string, base int) RootType {
+func newInt512(s string, base int) RootType {
     var bs []byte
     switch base {
     case 2:
-        bs = helper.BinaryStringToBytes(s, BYTE_LENGTH_256)
+        bs = helper.BinaryStringToBytes(s, BYTE_LENGTH_512)
     case 10:
-        bs = helper.DecimalStringToBytes(s, BYTE_LENGTH_256)
+        bs = helper.DecimalStringToBytes(s, BYTE_LENGTH_512)
     case 16:
-        bs = helper.HexStringToBytes(s, BYTE_LENGTH_256)
+        bs = helper.HexStringToBytes(s, BYTE_LENGTH_512)
     default:
-        bs = helper.DecimalStringToBytes(s, BYTE_LENGTH_256)
+        bs = helper.DecimalStringToBytes(s, BYTE_LENGTH_512)
     }
     
-    newValue := &Int256 {
+    newValue := &Int512 {
         bs: bs,
     }
     return newValue
 }
 
-func ToInt256(value interface{}) *Int256 {
-    return toInt256(value).(*Int256)
+func ToInt512(value interface{}) *Int512 {
+    return toInt512(value).(*Int512)
 }
 
-// TODO: Int128 to Int256
-func toInt256(value interface{}) RootType {
+// TODO: Int128/Int256 to Int512
+func toInt512(value interface{}) RootType {
     var bs []byte
     switch value.(type) {
     case *Int8:
         v := int64(value.(*Int8).Get())
-        bs = intToBytes(v, 1)
+        bs = intTo64Bytes(v, 1)
     case *Int16:
         v := int64(value.(*Int16).Get())
-        bs = intToBytes(v, 2)
+        bs = intTo64Bytes(v, 2)
     case *Int32:
         v := int64(value.(*Int32).Get())
-        bs = intToBytes(v, 4)
+        bs = intTo64Bytes(v, 4)
     case *Int64:
         v := value.(*Int64).Get()
-        bs = intToBytes(v, 8)
+        bs = intTo64Bytes(v, 8)
     default:
         return nil
     }
-    newValue := &Int256 {
+    newValue := &Int512 {
         bs: bs,
     }
     return newValue
 }
 
-func (value *Int256) Get() []byte {
-    bs := make([]byte, BYTE_LENGTH_256)
+func (value *Int512) Get() []byte {
+    bs := make([]byte, BYTE_LENGTH_512)
     copy(bs, value.bs)
     return bs
 }
 
-func (value *Int256) LShift(bits uint) *Int256 {
-    newBytes := make([]byte, BYTE_LENGTH_256)
+func (value *Int512) LShift(bits uint) *Int512 {
+    newBytes := make([]byte, BYTE_LENGTH_512)
     copy(newBytes, value.bs)
-    newValue := &Int256 {
+    newValue := &Int512 {
         bs: newBytes,
     }
     helper.LeftShift(newValue.bs, bits, 0)
     return newValue
 }
 
-func (value *Int256) RShift(bits uint) *Int256 {
-    newBytes := make([]byte, BYTE_LENGTH_256)
+func (value *Int512) RShift(bits uint) *Int512 {
+    newBytes := make([]byte, BYTE_LENGTH_512)
     copy(newBytes, value.bs)
-    newValue := &Int256 {
+    newValue := &Int512 {
         bs: newBytes,
     }
 
@@ -94,100 +94,100 @@ func (value *Int256) RShift(bits uint) *Int256 {
     return newValue
 }
 
-func (value *Int256) Not() *Int256 {
-    newBytes := make([]byte, BYTE_LENGTH_256)
+func (value *Int512) Not() *Int512 {
+    newBytes := make([]byte, BYTE_LENGTH_512)
     copy(newBytes, value.bs)
-    newValue := &Int256 {
+    newValue := &Int512 {
         bs: newBytes,
     }
     helper.Not(newValue.bs)
     return newValue
 }
 
-func (value *Int256) Or(val *Int256) *Int256 {
-    newBytes := make([]byte, BYTE_LENGTH_256)
+func (value *Int512) Or(val *Int512) *Int512 {
+    newBytes := make([]byte, BYTE_LENGTH_512)
     copy(newBytes, value.bs)
-    newValue := &Int256 {
+    newValue := &Int512 {
         bs: newBytes,
     }
     helper.Or(newValue.bs, val.bs)
     return newValue
 }
 
-func (value *Int256) And(val *Int256) *Int256 {
-    newBytes := make([]byte, BYTE_LENGTH_256)
+func (value *Int512) And(val *Int512) *Int512 {
+    newBytes := make([]byte, BYTE_LENGTH_512)
     copy(newBytes, value.bs)
-    newValue := &Int256 {
+    newValue := &Int512 {
         bs: newBytes,
     }
     helper.And(newValue.bs, val.bs)
     return newValue
 }
 
-func (value *Int256) Xor(val *Int256) *Int256 {
-    newBytes := make([]byte, BYTE_LENGTH_256)
+func (value *Int512) Xor(val *Int512) *Int512 {
+    newBytes := make([]byte, BYTE_LENGTH_512)
     copy(newBytes, value.bs)
-    newValue := &Int256 {
+    newValue := &Int512 {
         bs: newBytes,
     }
     helper.Xor(newValue.bs, val.bs)
     return newValue
 }
 
-func (value *Int256) Add(val *Int256) *Int256 {
-    newBytes := make([]byte, BYTE_LENGTH_256)
+func (value *Int512) Add(val *Int512) *Int512 {
+    newBytes := make([]byte, BYTE_LENGTH_512)
     copy(newBytes, value.bs)
-    newValue := &Int256 {
+    newValue := &Int512 {
         bs: newBytes,
     }
     helper.Add(newValue.bs, val.bs)
     return newValue
 }
 
-func (value *Int256) Sub(val *Int256) *Int256 {
-    newBytes := make([]byte, BYTE_LENGTH_256)
+func (value *Int512) Sub(val *Int512) *Int512 {
+    newBytes := make([]byte, BYTE_LENGTH_512)
     copy(newBytes, value.bs)
-    newValue := &Int256 {
+    newValue := &Int512 {
         bs: newBytes,
     }
     helper.Sub(newValue.bs, val.bs)
     return newValue
 }
 
-func (value *Int256) Multiply(val *Int256) *Int256 {
-    newBytes := make([]byte, BYTE_LENGTH_256)
+func (value *Int512) Multiply(val *Int512) *Int512 {
+    newBytes := make([]byte, BYTE_LENGTH_512)
     copy(newBytes, value.bs)
-    newValue := &Int256 {
+    newValue := &Int512 {
         bs: newBytes,
     }
     helper.Multiply(newValue.bs, val.bs)
     return newValue
 }
 
-func (value *Int256) Divide(val *Int256) *Int256 {
-    newBytes := make([]byte, BYTE_LENGTH_256)
+func (value *Int512) Divide(val *Int512) *Int512 {
+    newBytes := make([]byte, BYTE_LENGTH_512)
     copy(newBytes, value.bs)
-    newValue := &Int256 {
+    newValue := &Int512 {
         bs: newBytes,
     }
     helper.Divide(newValue.bs, val.bs, true)
     return newValue
 }
 
-func (value *Int256) Modulo(val *Int256) *Int256 {
-    newBytes := make([]byte, BYTE_LENGTH_256)
+func (value *Int512) Modulo(val *Int512) *Int512 {
+    newBytes := make([]byte, BYTE_LENGTH_512)
     copy(newBytes, value.bs)
-    newValue := &Int256 {
+    newValue := &Int512 {
         bs: newBytes,
     }
     ans := helper.Divide(newValue.bs, val.bs, true)
-    remainder := &Int256 {
+    remainder := &Int512 {
         bs: ans,
     }
     return remainder
 }
 
-func (value *Int256) Compare(val *Int256) int {
+func (value *Int512) Compare(val *Int512) int {
     negA := helper.IsNegative(value.bs)
     negB := helper.IsNegative(val.bs)
 
@@ -203,11 +203,11 @@ func (value *Int256) Compare(val *Int256) int {
     return ans
 }
 
-func (value *Int256) IsZero() bool {
+func (value *Int512) IsZero() bool {
     return helper.IsZero(value.bs)
 }
 
-func (value *Int256) ToString(base int) (string, error) {
+func (value *Int512) ToString(base int) (string, error) {
     switch base {
     case 2:
         return helper.ToBinaryString(value.bs), nil
@@ -221,54 +221,62 @@ func (value *Int256) ToString(base int) (string, error) {
     return "", nil
 }
 
-func (value *Int256) ToBytes() []byte {
-    bs := make([]byte, BYTE_LENGTH_256)
+func (value *Int512) ToBytes() []byte {
+    bs := make([]byte, BYTE_LENGTH_512)
     copy(bs, value.bs)
 
     return bs
 }
 
-func (value *Int256) IsSigned() bool {
+func (value *Int512) IsSigned() bool {
     return true
 }
 
-func (value *Int256) ZERO() *Int256 {
-    bs := make([]byte, BYTE_LENGTH_256)
-    newValue := &Int256 {
+func (value *Int512) ZERO() *Int512 {
+    bs := make([]byte, BYTE_LENGTH_512)
+    newValue := &Int512 {
         bs: bs,
     }
     return newValue;
 }
 
-func (value *Int256) MAX() *Int256 {
+func (value *Int512) MAX() *Int512 {
     bs := []byte{
+        0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
+        0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
+        0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
+        0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
         0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
         0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
         0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
         0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0x7F,
     }
-    newValue := &Int256 {
+    newValue := &Int512 {
         bs: bs,
     }
     return newValue;
 }
 
-func (value *Int256) MIN() *Int256 {
+func (value *Int512) MIN() *Int512 {
     bs := []byte{
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
         0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
         0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
         0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
         0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x80,
     }
-    newValue := &Int256 {
+    newValue := &Int512 {
         bs: bs,
     }
     return newValue;
 }
 
-func intToBytes(value int64, byteNum int) []byte {
+func intTo64Bytes(value int64, byteNum int) []byte {
     var mask int64 = 1 << 8 - 1
-    bs := make([]byte, BYTE_LENGTH_256)
+    bs := make([]byte, BYTE_LENGTH_512)
     
     for i := 0; i < byteNum; i++ {
         bs[i] = byte((value & mask) >> uint(i * 8))
