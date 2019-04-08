@@ -63,13 +63,13 @@ func toInt256(value interface{}) RootType {
 }
 
 func (value *Int256) Get() []byte {
-    bs := make([]byte, BYTE_LENGTH_256)
+    bs := make([]byte, len(value.bs))
     copy(bs, value.bs)
     return bs
 }
 
 func (value *Int256) LShift(bits uint) *Int256 {
-    newBytes := make([]byte, BYTE_LENGTH_256)
+    newBytes := make([]byte, len(value.bs))
     copy(newBytes, value.bs)
     newValue := &Int256 {
         bs: newBytes,
@@ -79,7 +79,7 @@ func (value *Int256) LShift(bits uint) *Int256 {
 }
 
 func (value *Int256) RShift(bits uint) *Int256 {
-    newBytes := make([]byte, BYTE_LENGTH_256)
+    newBytes := make([]byte, len(value.bs))
     copy(newBytes, value.bs)
     newValue := &Int256 {
         bs: newBytes,
@@ -95,7 +95,7 @@ func (value *Int256) RShift(bits uint) *Int256 {
 }
 
 func (value *Int256) Not() *Int256 {
-    newBytes := make([]byte, BYTE_LENGTH_256)
+    newBytes := make([]byte, len(value.bs))
     copy(newBytes, value.bs)
     newValue := &Int256 {
         bs: newBytes,
@@ -105,7 +105,7 @@ func (value *Int256) Not() *Int256 {
 }
 
 func (value *Int256) Or(val *Int256) *Int256 {
-    newBytes := make([]byte, BYTE_LENGTH_256)
+    newBytes := make([]byte, len(value.bs))
     copy(newBytes, value.bs)
     newValue := &Int256 {
         bs: newBytes,
@@ -115,7 +115,7 @@ func (value *Int256) Or(val *Int256) *Int256 {
 }
 
 func (value *Int256) And(val *Int256) *Int256 {
-    newBytes := make([]byte, BYTE_LENGTH_256)
+    newBytes := make([]byte, len(value.bs))
     copy(newBytes, value.bs)
     newValue := &Int256 {
         bs: newBytes,
@@ -125,7 +125,7 @@ func (value *Int256) And(val *Int256) *Int256 {
 }
 
 func (value *Int256) Xor(val *Int256) *Int256 {
-    newBytes := make([]byte, BYTE_LENGTH_256)
+    newBytes := make([]byte, len(value.bs))
     copy(newBytes, value.bs)
     newValue := &Int256 {
         bs: newBytes,
@@ -135,7 +135,7 @@ func (value *Int256) Xor(val *Int256) *Int256 {
 }
 
 func (value *Int256) Add(val *Int256) *Int256 {
-    newBytes := make([]byte, BYTE_LENGTH_256)
+    newBytes := make([]byte, len(value.bs))
     copy(newBytes, value.bs)
     newValue := &Int256 {
         bs: newBytes,
@@ -145,7 +145,7 @@ func (value *Int256) Add(val *Int256) *Int256 {
 }
 
 func (value *Int256) Sub(val *Int256) *Int256 {
-    newBytes := make([]byte, BYTE_LENGTH_256)
+    newBytes := make([]byte, len(value.bs))
     copy(newBytes, value.bs)
     newValue := &Int256 {
         bs: newBytes,
@@ -155,7 +155,7 @@ func (value *Int256) Sub(val *Int256) *Int256 {
 }
 
 func (value *Int256) Multiply(val *Int256) *Int256 {
-    newBytes := make([]byte, BYTE_LENGTH_256)
+    newBytes := make([]byte, len(value.bs))
     copy(newBytes, value.bs)
     newValue := &Int256 {
         bs: newBytes,
@@ -165,7 +165,7 @@ func (value *Int256) Multiply(val *Int256) *Int256 {
 }
 
 func (value *Int256) Divide(val *Int256) *Int256 {
-    newBytes := make([]byte, BYTE_LENGTH_256)
+    newBytes := make([]byte, len(value.bs))
     copy(newBytes, value.bs)
     newValue := &Int256 {
         bs: newBytes,
@@ -175,7 +175,7 @@ func (value *Int256) Divide(val *Int256) *Int256 {
 }
 
 func (value *Int256) Modulo(val *Int256) *Int256 {
-    newBytes := make([]byte, BYTE_LENGTH_256)
+    newBytes := make([]byte, len(value.bs))
     copy(newBytes, value.bs)
     newValue := &Int256 {
         bs: newBytes,
@@ -222,7 +222,7 @@ func (value *Int256) ToString(base int) (string, error) {
 }
 
 func (value *Int256) ToBytes() []byte {
-    bs := make([]byte, BYTE_LENGTH_256)
+    bs := make([]byte, len(value.bs))
     copy(bs, value.bs)
 
     return bs
@@ -233,7 +233,7 @@ func (value *Int256) IsSigned() bool {
 }
 
 func (value *Int256) ZERO() *Int256 {
-    bs := make([]byte, BYTE_LENGTH_256)
+    bs := make([]byte, len(value.bs))
     newValue := &Int256 {
         bs: bs,
     }

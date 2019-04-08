@@ -63,13 +63,13 @@ func toInt512(value interface{}) RootType {
 }
 
 func (value *Int512) Get() []byte {
-    bs := make([]byte, BYTE_LENGTH_512)
+    bs := make([]byte, len(value.bs))
     copy(bs, value.bs)
     return bs
 }
 
 func (value *Int512) LShift(bits uint) *Int512 {
-    newBytes := make([]byte, BYTE_LENGTH_512)
+    newBytes := make([]byte, len(value.bs))
     copy(newBytes, value.bs)
     newValue := &Int512 {
         bs: newBytes,
@@ -79,7 +79,7 @@ func (value *Int512) LShift(bits uint) *Int512 {
 }
 
 func (value *Int512) RShift(bits uint) *Int512 {
-    newBytes := make([]byte, BYTE_LENGTH_512)
+    newBytes := make([]byte, len(value.bs))
     copy(newBytes, value.bs)
     newValue := &Int512 {
         bs: newBytes,
@@ -95,7 +95,7 @@ func (value *Int512) RShift(bits uint) *Int512 {
 }
 
 func (value *Int512) Not() *Int512 {
-    newBytes := make([]byte, BYTE_LENGTH_512)
+    newBytes := make([]byte, len(value.bs))
     copy(newBytes, value.bs)
     newValue := &Int512 {
         bs: newBytes,
@@ -105,7 +105,7 @@ func (value *Int512) Not() *Int512 {
 }
 
 func (value *Int512) Or(val *Int512) *Int512 {
-    newBytes := make([]byte, BYTE_LENGTH_512)
+    newBytes := make([]byte, len(value.bs))
     copy(newBytes, value.bs)
     newValue := &Int512 {
         bs: newBytes,
@@ -115,7 +115,7 @@ func (value *Int512) Or(val *Int512) *Int512 {
 }
 
 func (value *Int512) And(val *Int512) *Int512 {
-    newBytes := make([]byte, BYTE_LENGTH_512)
+    newBytes := make([]byte, len(value.bs))
     copy(newBytes, value.bs)
     newValue := &Int512 {
         bs: newBytes,
@@ -125,7 +125,7 @@ func (value *Int512) And(val *Int512) *Int512 {
 }
 
 func (value *Int512) Xor(val *Int512) *Int512 {
-    newBytes := make([]byte, BYTE_LENGTH_512)
+    newBytes := make([]byte, len(value.bs))
     copy(newBytes, value.bs)
     newValue := &Int512 {
         bs: newBytes,
@@ -135,7 +135,7 @@ func (value *Int512) Xor(val *Int512) *Int512 {
 }
 
 func (value *Int512) Add(val *Int512) *Int512 {
-    newBytes := make([]byte, BYTE_LENGTH_512)
+    newBytes := make([]byte, len(value.bs))
     copy(newBytes, value.bs)
     newValue := &Int512 {
         bs: newBytes,
@@ -145,7 +145,7 @@ func (value *Int512) Add(val *Int512) *Int512 {
 }
 
 func (value *Int512) Sub(val *Int512) *Int512 {
-    newBytes := make([]byte, BYTE_LENGTH_512)
+    newBytes := make([]byte, len(value.bs))
     copy(newBytes, value.bs)
     newValue := &Int512 {
         bs: newBytes,
@@ -155,7 +155,7 @@ func (value *Int512) Sub(val *Int512) *Int512 {
 }
 
 func (value *Int512) Multiply(val *Int512) *Int512 {
-    newBytes := make([]byte, BYTE_LENGTH_512)
+    newBytes := make([]byte, len(value.bs))
     copy(newBytes, value.bs)
     newValue := &Int512 {
         bs: newBytes,
@@ -165,7 +165,7 @@ func (value *Int512) Multiply(val *Int512) *Int512 {
 }
 
 func (value *Int512) Divide(val *Int512) *Int512 {
-    newBytes := make([]byte, BYTE_LENGTH_512)
+    newBytes := make([]byte, len(value.bs))
     copy(newBytes, value.bs)
     newValue := &Int512 {
         bs: newBytes,
@@ -175,7 +175,7 @@ func (value *Int512) Divide(val *Int512) *Int512 {
 }
 
 func (value *Int512) Modulo(val *Int512) *Int512 {
-    newBytes := make([]byte, BYTE_LENGTH_512)
+    newBytes := make([]byte, len(value.bs))
     copy(newBytes, value.bs)
     newValue := &Int512 {
         bs: newBytes,
@@ -222,7 +222,7 @@ func (value *Int512) ToString(base int) (string, error) {
 }
 
 func (value *Int512) ToBytes() []byte {
-    bs := make([]byte, BYTE_LENGTH_512)
+    bs := make([]byte, len(value.bs))
     copy(bs, value.bs)
 
     return bs
@@ -233,7 +233,7 @@ func (value *Int512) IsSigned() bool {
 }
 
 func (value *Int512) ZERO() *Int512 {
-    bs := make([]byte, BYTE_LENGTH_512)
+    bs := make([]byte, len(value.bs))
     newValue := &Int512 {
         bs: bs,
     }
