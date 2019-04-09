@@ -482,6 +482,23 @@ func ToDecimalString(value []byte, signed bool) string {
     return str
 }
 
+func Resize(value []byte, size int, padding int) []byte {
+    newValue := make([]byte, size)
+    if padding > 0 {
+        for i := 0; i < size; i++ {
+            newValue[i] = 255
+        }
+    }
+    copy(newValue, value)
+    return newValue
+}
+
+func PaddingOne(value []byte) {
+    for i := 0; i < len(value); i++ {
+        value[i] = 255
+    }
+}
+
 func paddingZero(data string, length int) string {
     zeros := length - len(data)
     padded := ""

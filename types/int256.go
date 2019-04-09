@@ -1,6 +1,7 @@
 package types
 
 import (
+    "encoding/binary"
     "errors"
 
     "beson/helper"
@@ -37,22 +38,58 @@ func ToInt256(value interface{}) *Int256 {
     return toInt256(value).(*Int256)
 }
 
-// TODO: Int128 to Int256
 func toInt256(value interface{}) RootType {
-    var bs []byte
+    bs := make([]byte, 32)
     switch value.(type) {
     case *Int8:
-        v := int64(value.(*Int8).Get())
-        bs = intToBytes(v, 1)
+        v := byte(value.(*Int8).Get())
+        if helper.IsNegative([]byte{ v }) {
+            helper.PaddingOne(bs)
+        }
+        bs[0] = v
     case *Int16:
-        v := int64(value.(*Int16).Get())
-        bs = intToBytes(v, 2)
+        v := uint16(value.(*Int16).Get())
+        if v & 0x8000 > 0 {
+            helper.PaddingOne(bs)
+        }
+        binary.LittleEndian.PutUint16(bs, v)
     case *Int32:
-        v := int64(value.(*Int32).Get())
-        bs = intToBytes(v, 4)
+        v := uint32(value.(*Int32).Get())
+        if v & 0x80000000 > 0 {
+            helper.PaddingOne(bs)
+        }
+        binary.LittleEndian.PutUint32(bs, v)
     case *Int64:
-        v := value.(*Int64).Get()
-        bs = intToBytes(v, 8)
+        v := uint64(value.(*Int64).Get())
+        if v & 0x8000000000000000 > 0 {
+            helper.PaddingOne(bs)
+        }
+        binary.LittleEndian.PutUint64(bs, v)
+    case *Int128:
+        v := uint64(value.(*Int128).High())
+        if v & 0x8000000000000000 > 0 {
+            helper.PaddingOne(bs)
+        }
+        binary.LittleEndian.PutUint64(bs[:16], value.(*Int128).Low())
+        binary.LittleEndian.PutUint64(bs[16:], value.(*Int128).High())
+    case *Int512:
+        v := value.(*Int512).Get()
+        length := len(v)
+
+        padding := 0
+        if v[length - 1] & 0x80 > 0 {
+            padding = 1
+        }
+        bs = helper.Resize(value.(*Int512).Get(), 32, padding)
+    case *IntVar:
+        v := value.(*IntVar).Get()
+        length := len(v)
+
+        padding := 0
+        if v[length - 1] & 0x80 > 0 {
+            padding = 1
+        }
+        bs = helper.Resize(value.(*IntVar).Get(), 32, padding)
     default:
         return nil
     }

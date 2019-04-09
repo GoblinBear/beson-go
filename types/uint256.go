@@ -1,6 +1,7 @@
 package types
 
 import (
+    "encoding/binary"
     "errors"
 
     "beson/helper"
@@ -39,22 +40,24 @@ func ToUInt256(value interface{}) *UInt256 {
     return toUInt256(value).(*UInt256)
 }
 
-// TODO: UInt128 to UInt256
 func toUInt256(value interface{}) RootType {
-    var bs []byte
+    bs := make([]byte, 32)
     switch value.(type) {
     case *UInt8:
-        v := uint64(value.(*UInt8).Get())
-        bs = uintToBytes(v, 1)
+        bs[0] = value.(*UInt8).Get()
     case *UInt16:
-        v := uint64(value.(*UInt16).Get())
-        bs = uintToBytes(v, 2)
+        binary.LittleEndian.PutUint16(bs, value.(*UInt16).Get())
     case *UInt32:
-        v := uint64(value.(*UInt32).Get())
-        bs = uintToBytes(v, 4)
+        binary.LittleEndian.PutUint32(bs, value.(*UInt32).Get())
     case *UInt64:
-        v := value.(*UInt64).Get()
-        bs = uintToBytes(v, 8)
+        binary.LittleEndian.PutUint64(bs, value.(*UInt64).Get())
+    case *UInt128:
+        binary.LittleEndian.PutUint64(bs[:16], value.(*UInt128).Low())
+        binary.LittleEndian.PutUint64(bs[16:], value.(*UInt128).High())
+    case *UInt512:
+        bs = helper.Resize(value.(*UInt512).Get(), 32, 0)
+    case *UIntVar:
+        bs = helper.Resize(value.(*UIntVar).Get(), 32, 0)
     default:
         return nil
     }
@@ -241,13 +244,3 @@ func (value *UInt256) MAX() *UInt256 {
     return newValue;
 }
 
-func uintToBytes(value uint64, byteNum int) []byte {
-    var mask uint64 = 1 << 8 - 1
-    bs := make([]byte, BYTE_LENGTH_256)
-    
-    for i := 0; i < byteNum; i++ {
-        bs[i] = byte((value & mask) >> uint(i * 8))
-        mask = mask << 8
-    }
-    return bs
-}
