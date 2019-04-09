@@ -70,6 +70,10 @@ func (value *UInt512) Get() []byte {
     return bs
 }
 
+func (value *UInt512) Set(bs []byte) {
+    copy(value.bs, bs)
+}
+
 func (value *UInt512) LShift(bits uint) *UInt512 {
     newBytes := make([]byte, len(value.bs))
     copy(newBytes, value.bs)

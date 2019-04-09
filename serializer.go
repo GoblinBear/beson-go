@@ -3,6 +3,7 @@ package beson
 import (
     "bytes"
     "encoding/binary"
+    "log"
     "math"
     "strings"
 
@@ -58,6 +59,12 @@ func getType(data interface{}) string {
         t = DATA_TYPE["INT64"]
     case *types.Int128:
         t = DATA_TYPE["INT128"]
+    case *types.Int256:
+        t = DATA_TYPE["INT256"]
+    case *types.Int512:
+        t = DATA_TYPE["INT512"]
+    case *types.IntVar:
+        t = DATA_TYPE["INTVAR"]
     case *types.UInt8:
         t = DATA_TYPE["UINT8"]
     case *types.UInt16:
@@ -68,6 +75,12 @@ func getType(data interface{}) string {
         t = DATA_TYPE["UINT64"]
     case *types.UInt128:
         t = DATA_TYPE["UINT128"]
+    case *types.UInt256:
+        t = DATA_TYPE["UINT256"]
+    case *types.UInt512:
+        t = DATA_TYPE["UINT512"]
+    case *types.UIntVar:
+        t = DATA_TYPE["UINTVAR"]
     case *types.Binary:
         t = DATA_TYPE["BINARY"]
     case *types.String:
@@ -79,7 +92,7 @@ func getType(data interface{}) string {
     default:
         t = ""
     }
-
+    
     return t
 }
 
@@ -114,6 +127,12 @@ func serializeData(t string, data interface{}) []byte {
         binary.LittleEndian.PutUint64(buffers, data.(*types.UInt64).Get())
     case DATA_TYPE["UINT128"]:
         buffers = serializeUInt128(data.(*types.UInt128))
+    case DATA_TYPE["UINT256"]:
+        buffers = serializeUInt256(data.(*types.UInt256))
+    case DATA_TYPE["UINT512"]:
+        buffers = serializeUInt512(data.(*types.UInt512))
+    case DATA_TYPE["UINTVAR"]:
+        buffers = serializeUIntVar(data.(*types.UIntVar))
     case DATA_TYPE["INT8"]:
         buffers = make([]byte, 1)
         buffers[0] = uint8(data.(*types.Int8).Get())
@@ -128,6 +147,12 @@ func serializeData(t string, data interface{}) []byte {
         binary.LittleEndian.PutUint64(buffers, uint64(data.(*types.Int64).Get()))
     case DATA_TYPE["INT128"]:
         buffers = serializeInt128(data.(*types.Int128))
+    case DATA_TYPE["INT256"]:
+        buffers = serializeInt256(data.(*types.Int256))
+    case DATA_TYPE["INT512"]:
+        buffers = serializeInt512(data.(*types.Int512))
+    case DATA_TYPE["INTVAR"]:
+        buffers = serializeIntVar(data.(*types.IntVar))
     case DATA_TYPE["FLOAT32"]:
         bits := math.Float32bits(data.(*types.Float32).Get())
         buffers = make([]byte, 4)
@@ -168,8 +193,54 @@ func serializeUInt128(value *types.UInt128) []byte {
     return buf
 }
 
+func serializeUInt256(value *types.UInt256) []byte {
+    buf := value.ToBytes()
+    return buf
+}
+
+func serializeUInt512(value *types.UInt512) []byte {
+    buf := value.ToBytes()
+    return buf
+}
+
+func serializeUIntVar(value *types.UIntVar) []byte {
+    dataBytes := value.ToBytes()
+    length := len(dataBytes)
+    if length > 127 {
+        log.Fatal("Cannot support IntVar whose size is greater than 127 bytes.")
+    }
+
+    lengthBytes := []byte{ byte(length) }
+    buf := concatBytesArray(lengthBytes, dataBytes)
+
+    return buf
+}
+
 func serializeInt128(value *types.Int128) []byte {
     buf := value.ToBytes()
+    return buf
+}
+
+func serializeInt256(value *types.Int256) []byte {
+    buf := value.ToBytes()
+    return buf
+}
+
+func serializeInt512(value *types.Int512) []byte {
+    buf := value.ToBytes()
+    return buf
+}
+
+func serializeIntVar(value *types.IntVar) []byte {
+    dataBytes := value.ToBytes()
+    length := len(dataBytes)
+    if length > 127 {
+        log.Fatal("Cannot support IntVar whose size is greater than 127 bytes.")
+    }
+
+    lengthBytes := []byte{ byte(length) }
+    buf := concatBytesArray(lengthBytes, dataBytes)
+
     return buf
 }
 
@@ -222,7 +293,7 @@ func serializeMap(value *types.Map) []byte {
     m := value.Get()
     for key, value := range m {
         // serialize key
-        k := types.NewString(key).(*types.String)
+        k := types.NewString(key)
         keyBytes := serializeShortString(k)
 
         // serialize value

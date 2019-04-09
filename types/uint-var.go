@@ -68,6 +68,10 @@ func (value *UIntVar) Get() []byte {
     return bs
 }
 
+func (value *UIntVar) Set(bs []byte) {
+    copy(value.bs, bs)
+}
+
 func (value *UIntVar) LShift(bits uint) *UIntVar {
     newBytes := make([]byte, len(value.bs))
     copy(newBytes, value.bs)

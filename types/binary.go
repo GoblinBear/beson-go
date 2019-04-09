@@ -10,7 +10,11 @@ type Binary struct {
     bs []byte
 }
 
-func NewBinary(length int) RootType {
+func NewBinary(length int) *Binary {
+    return newBinary(length).(*Binary)
+}
+
+func newBinary(length int) RootType {
     if length < 0 {
         return nil
     }

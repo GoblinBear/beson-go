@@ -9,30 +9,36 @@ import (
 
 var originData = map[string]types.RootType {
     "NULL":     nil,
-    "TRUE":     types.NewBool(true).(*types.Bool),
-    "FALSE":    types.NewBool(false).(*types.Bool),
-    "UINT8":    types.NewUInt8(2).(*types.UInt8),
-    "UINT16":   types.NewUInt16(2).(*types.UInt16),
-    "UINT32":   types.NewUInt32(2).(*types.UInt32),
-    "UINT64":   types.NewUInt64(2).(*types.UInt64),
-    "UINT128":  types.NewUInt128("2", 10).(*types.UInt128),
-    "INT8":     types.NewInt8(-3).(*types.Int8),
-    "INT16":    types.NewInt16(-3).(*types.Int16),
-    "INT32":    types.NewInt32(-3).(*types.Int32),
-    "INT64":    types.NewInt64(-3).(*types.Int64),
-    "INT128":   types.NewInt128("-3", 10).(*types.Int128),
-    "FLOAT32":  types.NewFloat32(0.456).(*types.Float32),
-    "FLOAT64":  types.NewFloat64(0.456).(*types.Float64),
-    "STRING":   types.NewString("Hello world").(*types.String),
+    "TRUE":     types.NewBool(true),
+    "FALSE":    types.NewBool(false),
+    "UINT8":    types.NewUInt8(2),
+    "UINT16":   types.NewUInt16(2),
+    "UINT32":   types.NewUInt32(2),
+    "UINT64":   types.NewUInt64(2),
+    "UINT128":  types.NewUInt128("2", 10),
+    "UINT256":  types.NewUInt256("2", 10),
+    "UINT512":  types.NewUInt512("2", 10),
+    "UINTVAR":  types.NewUIntVar("2", 10, 8),
+    "INT8":     types.NewInt8(-3),
+    "INT16":    types.NewInt16(-3),
+    "INT32":    types.NewInt32(-3),
+    "INT64":    types.NewInt64(-3),
+    "INT128":   types.NewInt128("-3", 10),
+    "INT256":   types.NewInt256("-3", 10),
+    "INT512":   types.NewInt512("-3", 10),
+    "INTVAR":   types.NewIntVar("-3", 10, 8),
+    "FLOAT32":  types.NewFloat32(0.456),
+    "FLOAT64":  types.NewFloat64(0.456),
+    "STRING":   types.NewString("Hello world"),
     "ARRAY":    types.NewSlice([]types.RootType { 
-        types.NewFloat32(0.456).(*types.Float32),
-        types.NewInt32(-3).(*types.Int32),
-    }).(*types.Slice),
+        types.NewFloat32(0.456),
+        types.NewInt32(-3),
+    }),
     "MAP":      types.NewMap(map[string]types.RootType { 
-        "apple":    types.NewUInt8(2).(*types.UInt8),
-        "banana":   types.NewBool(false).(*types.Bool),
-    }).(*types.Map),
-    "BINARY":   types.NewBinary(0).(*types.Binary).FromHex("0x2564877"),
+        "apple":    types.NewUInt8(2),
+        "banana":   types.NewBool(false),
+    }),
+    "BINARY":   types.NewBinary(0).FromHex("0x2564877"),
 }
 
 var serializedData = map[string][]byte {
@@ -44,11 +50,17 @@ var serializedData = map[string][]byte {
     "UINT32":   []byte{ 3, 0, 2, 0, 0, 0 },
     "UINT64":   []byte{ 3, 1, 2, 0, 0, 0, 0, 0, 0, 0 },
     "UINT128":  []byte{ 3, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+    "UINT256":  []byte{ 3, 6, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+    "UINT512":  []byte{ 3, 7, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+    "UINTVAR":  []byte{ 3, 255, 8, 2, 0, 0, 0, 0, 0, 0, 0 },
     "INT8":     []byte{ 2, 4, 253 },
     "INT16":    []byte{ 2, 5, 253, 255 },
     "INT32":    []byte{ 2, 0, 253, 255, 255, 255 },
     "INT64":    []byte{ 2, 1, 253,  255,  255,  255,  255,  255,  255, 255 },
     "INT128":   []byte{ 2, 2, 253,  255,  255,  255,  255,  255,  255,  255,  255,  255,  255,  255,  255,  255,  255, 255 },
+    "INT256":   []byte{ 2, 6, 253,  255,  255,  255,  255,  255,  255,  255,  255,  255,  255,  255,  255,  255,  255, 255, 255,  255,  255,  255,  255,  255,  255,  255,  255,  255,  255,  255,  255,  255, 255, 255 },
+    "INT512":   []byte{ 2, 7, 253,  255,  255,  255,  255,  255,  255,  255,  255,  255,  255,  255,  255,  255,  255, 255, 255,  255,  255,  255,  255,  255,  255,  255,  255,  255,  255,  255,  255,  255, 255, 255, 255,  255,  255,  255,  255,  255,  255,  255,  255,  255,  255,  255,  255,  255, 255, 255,  255,  255,  255,  255,  255,  255,  255,  255,  255,  255,  255,  255,  255, 255, 255, 255 },
+    "INTVAR":   []byte{ 2, 255, 8, 253,  255,  255,  255,  255,  255,  255, 255 },
     "FLOAT32":  []byte{ 4, 1, 213, 120, 233, 62 },
     "FLOAT64":  []byte{ 4, 0, 201, 118, 190, 159, 26, 47, 221, 63 },
     "STRING":   []byte{ 5, 0, 11, 0, 0, 0, 72, 101, 108, 108, 111, 32, 119, 111, 114, 108, 100 },
@@ -66,11 +78,17 @@ func TestSerialize(t *testing.T) {
     t.Run("UINT32", testSerializeFunc(originData["UINT32"], serializedData["UINT32"]))
     t.Run("UINT64", testSerializeFunc(originData["UINT64"], serializedData["UINT64"]))
     t.Run("UINT128", testSerializeFunc(originData["UINT128"], serializedData["UINT128"]))
+    t.Run("UINT256", testSerializeFunc(originData["UINT256"], serializedData["UINT256"]))
+    t.Run("UINT512", testSerializeFunc(originData["UINT512"], serializedData["UINT512"]))
+    t.Run("UINTVAR", testSerializeFunc(originData["UINTVAR"], serializedData["UINTVAR"]))
     t.Run("INT8", testSerializeFunc(originData["INT8"], serializedData["INT8"]))
     t.Run("INT16", testSerializeFunc(originData["INT16"], serializedData["INT16"]))
     t.Run("INT32", testSerializeFunc(originData["INT32"], serializedData["INT32"]))
     t.Run("INT64", testSerializeFunc(originData["INT64"], serializedData["INT64"]))
     t.Run("INT128", testSerializeFunc(originData["INT128"], serializedData["INT128"]))
+    t.Run("INT256", testSerializeFunc(originData["INT256"], serializedData["INT256"]))
+    t.Run("INT512", testSerializeFunc(originData["INT512"], serializedData["INT512"]))
+    t.Run("INTVAR", testSerializeFunc(originData["INTVAR"], serializedData["INTVAR"]))
     t.Run("FLOAT32", testSerializeFunc(originData["FLOAT32"], serializedData["FLOAT32"]))
     t.Run("FLOAT64", testSerializeFunc(originData["FLOAT64"], serializedData["FLOAT64"]))
     t.Run("STRING", testSerializeFunc(originData["STRING"], serializedData["STRING"]))
@@ -99,11 +117,17 @@ func TestDeserialize(t *testing.T) {
     t.Run("UINT32", testDeserializeFunc(serializedData["UINT32"], originData["UINT32"]))
     t.Run("UINT64", testDeserializeFunc(serializedData["UINT64"], originData["UINT64"]))
     t.Run("UINT128", testDeserializeFunc(serializedData["UINT128"], originData["UINT128"]))
+    t.Run("UINT256", testDeserializeFunc(serializedData["UINT256"], originData["UINT256"]))
+    t.Run("UINT512", testDeserializeFunc(serializedData["UINT512"], originData["UINT512"]))
+    t.Run("UINTVAR", testDeserializeFunc(serializedData["UINTVAR"], originData["UINTVAR"]))
     t.Run("INT8", testDeserializeFunc(serializedData["INT8"], originData["INT8"]))
     t.Run("INT16", testDeserializeFunc(serializedData["INT16"], originData["INT16"]))
     t.Run("INT32", testDeserializeFunc(serializedData["INT32"], originData["INT32"]))
     t.Run("INT64", testDeserializeFunc(serializedData["INT64"], originData["INT64"]))
     t.Run("INT128", testDeserializeFunc(serializedData["INT128"], originData["INT128"]))
+    t.Run("INT256", testDeserializeFunc(serializedData["INT256"], originData["INT256"]))
+    t.Run("INT512", testDeserializeFunc(serializedData["INT512"], originData["INT512"]))
+    t.Run("INTVAR", testDeserializeFunc(serializedData["INTVAR"], originData["INTVAR"]))
     t.Run("FLOAT32", testDeserializeFunc(serializedData["FLOAT32"], originData["FLOAT32"]))
     t.Run("FLOAT64", testDeserializeFunc(serializedData["FLOAT64"], originData["FLOAT64"]))
     t.Run("STRING", testDeserializeFunc(serializedData["STRING"], originData["STRING"]))
