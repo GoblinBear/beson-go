@@ -11,7 +11,11 @@ type Int128 struct {
     low uint64
 }
 
-func NewInt128(s string, base int) RootType {
+func NewInt128(s string, base int) *Int128 {
+    return newInt128(s, base).(*Int128)
+}
+
+func newInt128(s string, base int) RootType {
     fmt.Println("....")
     // Empty string bad.
     if len(s) == 0 {
@@ -28,7 +32,7 @@ func NewInt128(s string, base int) RootType {
     }
 
     // Convert unsigned.
-    un := NewUInt128(s, base).(*UInt128)
+    un := NewUInt128(s, base)
 
     newValue := &Int128 {
         high: 0,
@@ -256,7 +260,7 @@ func (value *Int128) IsSigned() bool {
 }
 
 func (value *Int128) SetValue(str string, base int) {
-    newValue := NewInt128(str, base).(*Int128)
+    newValue := NewInt128(str, base)
     value.high = newValue.high
     value.low = newValue.low
 }

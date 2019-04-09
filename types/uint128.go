@@ -14,7 +14,11 @@ type UInt128 struct {
     low uint64
 }
 
-func NewUInt128(s string, base int) RootType {
+func NewUInt128(s string, base int) *UInt128 {
+    return newUInt128(s, base).(*UInt128)
+}
+
+func newUInt128(s string, base int) RootType {
     switch base {
     case 2:
         return parseBinaryToUint(s)
@@ -185,7 +189,7 @@ func (value *UInt128) IsSigned() bool {
 }
 
 func (value *UInt128) SetValue(str string, base int) {
-    newValue := NewUInt128(str, base).(*UInt128)
+    newValue := NewUInt128(str, base)
     value.high = newValue.high
     value.low = newValue.low
 }

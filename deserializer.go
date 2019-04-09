@@ -152,7 +152,7 @@ func deserializeInt128(buffer []byte, start uint32)(uint32, types.RootType) {
     numLow := binary.LittleEndian.Uint64(buffer[start:start + 8])
     numHigh := binary.LittleEndian.Uint64(buffer[start + 8:end])
     
-    value := types.NewInt128("0", 2).(*types.Int128)
+    value := types.NewInt128("0", 2)
     value.SetLow(numLow)
     value.SetHigh(numHigh)
 
@@ -227,7 +227,7 @@ func deserializeUInt128(buffer []byte, start uint32)(uint32, types.RootType) {
     numLow := binary.LittleEndian.Uint64(buffer[start:start + 8])
     numHigh := binary.LittleEndian.Uint64(buffer[start + 8:end])
     
-    value := types.NewUInt128("0", 2).(*types.UInt128)
+    value := types.NewUInt128("0", 2)
     value.SetLow(numLow)
     value.SetHigh(numHigh)
 
