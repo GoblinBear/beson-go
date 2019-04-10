@@ -1,5 +1,7 @@
 # BESON - Binary Extended JSON
 
+[![GoDoc](https://godoc.org/github.com/GoblinBear/beson-go?status.svg)](https://godoc.org/github.com/GoblinBear/beson-go)
+
 Beson library is similar to BSON format used in mongodb. The major difference between beson and bson is that beson allows primitive data to be encoded directly. Beson is designed to transfer or store data in a binary format, not specialized for database storage.
 
 ## Table of Contents
@@ -15,9 +17,9 @@ Beson library is similar to BSON format used in mongodb. The major difference be
 ## Features
 
 - Big integer number operations.
-    - 128-bits integer：`UInt128` / `Int128`
-    - 256-bits integer：`UInt256` / `Int256`
-    - 512-bits integer：`UInt512` / `Int512`
+    - 128-bit integer：`UInt128` / `Int128`
+    - 256-bit integer：`UInt256` / `Int256`
+    - 512-bit integer：`UInt512` / `Int512`
     - Variable length integer：`UIntVar` / `IntVar`
 - Serialize types to binary sequence.
 - Desrialize binary sequence to types.

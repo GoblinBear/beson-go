@@ -49,17 +49,22 @@ func newInt128(s string, base int) RootType {
     return newValue
 }
 
-func ToInt128(value interface{}) RootType {
+// Converts Int8,Int16,Int32 or Int64 to Int128.
+func ToInt128(value interface{}) *Int128 {
+    return toInt128(value).(*Int128)
+}
+
+func toInt128(value interface{}) RootType {
     var low uint64
     switch value.(type) {
     case int8:
-        low = uint64(value.(int8))
+        low = uint64(value.(*Int8).Get())
     case int16:
-        low = uint64(value.(int16))
+        low = uint64(value.(*Int16).Get())
     case int32:
-        low = uint64(value.(int32))
+        low = uint64(value.(*Int32).Get())
     case int64:
-        low = uint64(value.(int64))
+        low = value.(*Int64).Get()
     default:
         return nil
     }

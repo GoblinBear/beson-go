@@ -9,6 +9,7 @@ import (
     "beson/types"
 )
 
+// Convert binary sequence to common type data. 
 func Deserialize(buffer []byte, anchor uint32)(uint32, types.RootType) {
     return deserializeContent(buffer, anchor)
 }

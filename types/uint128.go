@@ -14,6 +14,7 @@ type UInt128 struct {
     low uint64
 }
 
+// Creates a new 128-bit unsigned integer.
 func NewUInt128(s string, base int) *UInt128 {
     return newUInt128(s, base).(*UInt128)
 }
@@ -33,17 +34,22 @@ func newUInt128(s string, base int) RootType {
     return parseDecimalToUint(s)
 }
 
-func ToUInt128(value interface{}) RootType {
+// Converts UInt8,UInt16,UInt32 or UInt64 to UInt128.
+func ToUInt128(value interface{}) *UInt128 {
+    return toUInt128(value).(*UInt128)
+}
+
+func toUInt128(value interface{}) RootType {
     var low uint64
     switch value.(type) {
-    case uint8:
-        low = uint64(value.(uint8))
-    case uint16:
-        low = uint64(value.(uint16))
-    case uint32:
-        low = uint64(value.(uint32))
-    case uint64:
-        low = value.(uint64)
+    case *UInt8:
+        low = uint64(value.(*UInt8).Get())
+    case *UInt16:
+        low = uint64(value.(*UInt16).Get())
+    case *UInt32:
+        low = uint64(value.(*UInt32).Get())
+    case *UInt64:
+        low = value.(*UInt64).Get()
     default:
         return nil
     }
