@@ -4,7 +4,13 @@ Beson library is similar to BSON format used in mongodb. The major difference be
 
 ## Table of Contents
 
-[TOC]
+- [Features](#Features)
+- [Installation](#Installation)
+- [Quick start](#Quick-start)
+    - [Initialize a big integer number](#Initialize-a-big-integer-number)
+    - [Serialize](#Serialize)
+    - [Deserialize](#Deserialize)
+- [License](#License)
 
 ## Features
 
