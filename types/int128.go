@@ -11,7 +11,7 @@ type Int128 struct {
     low uint64
 }
 
-// NewInt128 creates a new 128-bit signed integer.
+// NewInt128 initializes a new 128-bit signed integer.
 func NewInt128(s string, base int) *Int128 {
     return newInt128(s, base).(*Int128)
 }
@@ -65,7 +65,7 @@ func toInt128(value interface{}) RootType {
     case int32:
         low = uint64(value.(*Int32).Get())
     case int64:
-        low = value.(*Int64).Get()
+        low = uint64(value.(*Int64).Get())
     default:
         return nil
     }

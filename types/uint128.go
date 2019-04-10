@@ -14,7 +14,7 @@ type UInt128 struct {
     low uint64
 }
 
-// NewUInt128 creates a new 128-bit unsigned integer.
+// NewUInt128 initializes a new 128-bit unsigned integer.
 func NewUInt128(s string, base int) *UInt128 {
     return newUInt128(s, base).(*UInt128)
 }

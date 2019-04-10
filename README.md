@@ -12,6 +12,7 @@ Beson library is similar to BSON format used in mongodb. The major difference be
     - [Initialize a big integer number](#Initialize-a-big-integer-number)
     - [Serialize](#Serialize)
     - [Deserialize](#Deserialize)
+- [Usage](#Usage)
 - [License](#License)
 
 ## Features
@@ -21,8 +22,8 @@ Beson library is similar to BSON format used in mongodb. The major difference be
     - 256-bit integer：`UInt256` / `Int256`
     - 512-bit integer：`UInt512` / `Int512`
     - Variable length integer：`UIntVar` / `IntVar`
-- Serialize types to binary sequence.
-- Desrialize binary sequence to types.
+- Serialize data to binary sequence.
+- Desrialize binary sequence to original data.
 
 ## Installation
 
@@ -112,6 +113,10 @@ func main() {
 6
 &{2568}
 ```
+
+## Usage
+
+- See the wiki page for details：[wiki](https://github.com/GoblinBear/beson-go/wiki)
 
 ## License
 
