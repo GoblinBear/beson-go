@@ -14,7 +14,7 @@ type UInt128 struct {
     low uint64
 }
 
-// Creates a new 128-bit unsigned integer.
+// NewUInt128 creates a new 128-bit unsigned integer.
 func NewUInt128(s string, base int) *UInt128 {
     return newUInt128(s, base).(*UInt128)
 }
@@ -34,7 +34,7 @@ func newUInt128(s string, base int) RootType {
     return parseDecimalToUint(s)
 }
 
-// Converts UInt8,UInt16,UInt32 or UInt64 to UInt128.
+// ToUInt128 converts UInt8,UInt16,UInt32 or UInt64 to UInt128.
 func ToUInt128(value interface{}) *UInt128 {
     return toUInt128(value).(*UInt128)
 }
