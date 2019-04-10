@@ -10,7 +10,7 @@ import (
     "beson/types"
 )
 
-// Convert common type data to binary sequence.
+// Serialize convert common type data to binary sequence.
 func Serialize(data interface{}) []byte {
     return serializeContent(data)
 }
