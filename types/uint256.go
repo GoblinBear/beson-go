@@ -52,8 +52,8 @@ func toUInt256(value interface{}) RootType {
     case *UInt64:
         binary.LittleEndian.PutUint64(bs, value.(*UInt64).Get())
     case *UInt128:
-        binary.LittleEndian.PutUint64(bs[:16], value.(*UInt128).Low())
-        binary.LittleEndian.PutUint64(bs[16:], value.(*UInt128).High())
+        binary.LittleEndian.PutUint64(bs[:8], value.(*UInt128).Low())
+        binary.LittleEndian.PutUint64(bs[8:16], value.(*UInt128).High())
     case *UInt512:
         bs = helper.Resize(value.(*UInt512).Get(), 32, 0)
     case *UIntVar:

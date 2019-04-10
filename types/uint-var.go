@@ -1,6 +1,7 @@
 package types
 
 import (
+    "encoding/binary"
     "errors"
 
     "beson/helper"
@@ -37,22 +38,26 @@ func ToUIntVar(value interface{}, size int) *UIntVar {
     return toUIntVar(value, size).(*UIntVar)
 }
 
-// TODO: UInt128 to UIntVar
 func toUIntVar(value interface{}, size int) RootType {
-    var bs []byte
+    bs := make([]byte, size)
     switch value.(type) {
     case *UInt8:
-        v := uint64(value.(*UInt8).Get())
-        bs = uintToVarBytes(v, 1, size)
+        bs[0] = value.(*UInt8).Get()
     case *UInt16:
-        v := uint64(value.(*UInt16).Get())
-        bs = uintToVarBytes(v, 2, size)
+        binary.LittleEndian.PutUint16(bs, value.(*UInt16).Get())
     case *UInt32:
-        v := uint64(value.(*UInt32).Get())
-        bs = uintToVarBytes(v, 4, size)
+        binary.LittleEndian.PutUint32(bs, value.(*UInt32).Get())
     case *UInt64:
-        v := value.(*UInt64).Get()
-        bs = uintToVarBytes(v, 8, size)
+        binary.LittleEndian.PutUint64(bs, value.(*UInt64).Get())
+    case *UInt128:
+        binary.LittleEndian.PutUint64(bs[:8], value.(*UInt128).Low())
+        binary.LittleEndian.PutUint64(bs[8:16], value.(*UInt128).High())
+    case *UInt256:
+        bs = helper.Resize(value.(*UInt256).Get(), size, 0)
+    case *UInt512:
+        bs = helper.Resize(value.(*UInt512).Get(), size, 0)
+    case *UIntVar:
+        bs = helper.Resize(value.(*UIntVar).Get(), size, 0)
     default:
         return nil
     }

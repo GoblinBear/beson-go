@@ -70,8 +70,8 @@ func toInt256(value interface{}) RootType {
         if v & 0x8000000000000000 > 0 {
             helper.PaddingOne(bs)
         }
-        binary.LittleEndian.PutUint64(bs[:16], value.(*Int128).Low())
-        binary.LittleEndian.PutUint64(bs[16:], value.(*Int128).High())
+        binary.LittleEndian.PutUint64(bs[:8], value.(*Int128).Low())
+        binary.LittleEndian.PutUint64(bs[8:16], value.(*Int128).High())
     case *Int512:
         v := value.(*Int512).Get()
         length := len(v)
@@ -80,7 +80,7 @@ func toInt256(value interface{}) RootType {
         if v[length - 1] & 0x80 > 0 {
             padding = 1
         }
-        bs = helper.Resize(value.(*Int512).Get(), 32, padding)
+        bs = helper.Resize(v, 32, padding)
     case *IntVar:
         v := value.(*IntVar).Get()
         length := len(v)
@@ -89,7 +89,7 @@ func toInt256(value interface{}) RootType {
         if v[length - 1] & 0x80 > 0 {
             padding = 1
         }
-        bs = helper.Resize(value.(*IntVar).Get(), 32, padding)
+        bs = helper.Resize(v, 32, padding)
     default:
         return nil
     }
