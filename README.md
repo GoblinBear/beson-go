@@ -4,6 +4,8 @@
 
 Beson library is similar to BSON format used in mongodb. The major difference between beson and bson is that beson allows primitive data to be encoded directly. Beson is designed to transfer or store data in a binary format, not specialized for database storage.
 
+![](https://i.imgur.com/d3zQviA.png)
+
 ## Table of Contents
 
 - [Features](#Features)
@@ -36,7 +38,7 @@ $ go get -u github.com/GoblinBear/beson-go
 Import it in your code (serialize / deserialize):
 
 ```go
-import "github.com/GoblinBear/beson-go"
+import beson "github.com/GoblinBear/beson-go"
 ```
 Import it in your code (big integer number):
 
@@ -57,7 +59,7 @@ import (
 )
 
 func main() {
-    v1 := types.NewUInt128("1844674407370955161825", 10)
+    v1 := types.NewUInt256("1844674407370955161825", 10)
     fmt.Println(v1)
 }
 ```
@@ -72,8 +74,8 @@ package main
 
 import (
     "fmt"
-    "beson"
-    "beson/types"
+    beson "github.com/GoblinBear/beson-go"
+    "github.com/GoblinBear/beson-go/types"
 )
 
 func main() {
@@ -96,8 +98,8 @@ package main
 
 import (
     "fmt"
-    "beson"
-    "beson/types"
+    beson "github.com/GoblinBear/beson-go"
+    "github.com/GoblinBear/beson-go/types"
 )
 
 func main() {
