@@ -1,4 +1,4 @@
-# BESON - Binary Extended JSON
+![](https://i.imgur.com/wY2aBAq.jpg)
 
 [![GoDoc](https://godoc.org/github.com/GoblinBear/beson-go?status.svg)](https://godoc.org/github.com/GoblinBear/beson-go)
 
