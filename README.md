@@ -22,13 +22,13 @@ Beson library is similar to BSON format used in mongodb. The major difference be
 
 BESON was designed to have the following three characteristics:
 
-1. **Lightweight**
+1. **Lightweight:**
 To be compared to BSON and JSON, BESON is more advantage in space efficiency. BESON allows primitive data to be encoded directly, which can save space overhead for object key.
 
-2. **Efficient**
+2. **Efficient:**
 Encoding data to BESON and decoding from BESON can be performed very quickly in most languages due to the use of primitive data types.
 
-3. **More Types**
+3. **More Types:**
 BESON supports many types of integer, 8-bit to 512-bit and even you can customize the size of the integer.
 
 ## Features
