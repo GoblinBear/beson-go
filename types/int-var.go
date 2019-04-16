@@ -15,7 +15,7 @@ func NewIntVar(s string, base int, size int) *IntVar {
     return newIntVar(s, base, size).(*IntVar)
 }
 
-func newIntVar(s string, base int, size int) RootType {
+func newIntVar(s string, base int, size int) interface{} {
     var bs []byte
     switch base {
     case 2:
@@ -38,7 +38,7 @@ func ToIntVar(value interface{}, size int) *IntVar {
     return toIntVar(value, size).(*IntVar)
 }
 
-func toIntVar(value interface{}, size int) RootType {
+func toIntVar(value interface{}, size int) interface{} {
     bs := make([]byte, size)
     switch value.(type) {
     case *Int8:

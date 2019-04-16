@@ -19,7 +19,7 @@ func NewUInt128(s string, base int) *UInt128 {
     return newUInt128(s, base).(*UInt128)
 }
 
-func newUInt128(s string, base int) RootType {
+func newUInt128(s string, base int) interface{} {
     switch base {
     case 2:
         return parseBinaryToUint(s)
@@ -39,7 +39,7 @@ func ToUInt128(value interface{}) *UInt128 {
     return toUInt128(value).(*UInt128)
 }
 
-func toUInt128(value interface{}) RootType {
+func toUInt128(value interface{}) interface{} {
     var low uint64
     switch value.(type) {
     case *UInt8:

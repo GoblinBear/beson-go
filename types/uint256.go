@@ -17,7 +17,7 @@ func NewUInt256(s string, base int) *UInt256 {
     return newUInt256(s, base).(*UInt256)
 }
 
-func newUInt256(s string, base int) RootType {
+func newUInt256(s string, base int) interface{} {
     var bs []byte
     switch base {
     case 2:
@@ -40,7 +40,7 @@ func ToUInt256(value interface{}) *UInt256 {
     return toUInt256(value).(*UInt256)
 }
 
-func toUInt256(value interface{}) RootType {
+func toUInt256(value interface{}) interface{} {
     bs := make([]byte, 32)
     switch value.(type) {
     case *UInt8:

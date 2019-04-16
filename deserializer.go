@@ -10,14 +10,14 @@ import (
 )
 
 // Deserialize convert binary sequence to common type data. 
-func Deserialize(buffer []byte, anchor uint32)(uint32, types.RootType) {
+func Deserialize(buffer []byte, anchor uint32)(uint32, interface{}) {
     return deserializeContent(buffer, anchor)
 }
 
-func deserializeContent(buffer []byte, start uint32)(uint32, types.RootType) {
+func deserializeContent(buffer []byte, start uint32)(uint32, interface{}) {
     var anchor uint32
     var t string
-    var value types.RootType
+    var value interface{}
 
     anchor, t = deserializeType(buffer, start)
     anchor, value = deserializeData(t, buffer, anchor)
@@ -34,9 +34,9 @@ func deserializeType(buffer []byte, start uint32)(uint32, string) {
     return end, t
 }
 
-func deserializeData(t string , buffer []byte, start uint32)(uint32, types.RootType) {
+func deserializeData(t string , buffer []byte, start uint32)(uint32, interface{}) {
     var anchor uint32
-    var value types.RootType
+    var value interface{}
 
     switch t {
     case DATA_TYPE["NULL"]:
@@ -102,11 +102,11 @@ func getTypeHeaderKey(typeData []uint8) string {
     return t
 }
 
-func deserializeNull(start uint32)(uint32, types.RootType) {
+func deserializeNull(start uint32)(uint32, interface{}) {
     return start, nil
 }
 
-func deserializeBoolean(t string, start uint32)(uint32, types.RootType) {
+func deserializeBoolean(t string, start uint32)(uint32, interface{}) {
     var value *types.Bool
     if t == DATA_TYPE["TRUE"] {
         value = types.NewBool(true)
@@ -116,7 +116,7 @@ func deserializeBoolean(t string, start uint32)(uint32, types.RootType) {
     return start, value
 }
 
-func deserializeInt8(buffer []byte, start uint32)(uint32, types.RootType) {
+func deserializeInt8(buffer []byte, start uint32)(uint32, interface{}) {
     end := start + 1
     num := int8(buffer[start])
     value := types.NewInt8(num)
@@ -124,7 +124,7 @@ func deserializeInt8(buffer []byte, start uint32)(uint32, types.RootType) {
     return end, value
 }
 
-func deserializeInt16(buffer []byte, start uint32)(uint32, types.RootType) {
+func deserializeInt16(buffer []byte, start uint32)(uint32, interface{}) {
     end := start + 2
     num := binary.LittleEndian.Uint16(buffer[start:end])
     value := types.NewInt16(int16(num))
@@ -132,7 +132,7 @@ func deserializeInt16(buffer []byte, start uint32)(uint32, types.RootType) {
     return end, value
 }
 
-func deserializeInt32(buffer []byte, start uint32)(uint32, types.RootType) {
+func deserializeInt32(buffer []byte, start uint32)(uint32, interface{}) {
     end := start + 4
     num := binary.LittleEndian.Uint32(buffer[start:end])
     value := types.NewInt32(int32(num))
@@ -140,7 +140,7 @@ func deserializeInt32(buffer []byte, start uint32)(uint32, types.RootType) {
     return end, value
 }
 
-func deserializeInt64(buffer []byte, start uint32)(uint32, types.RootType) {
+func deserializeInt64(buffer []byte, start uint32)(uint32, interface{}) {
     end := start + 8
     num := binary.LittleEndian.Uint64(buffer[start:end])
     value := types.NewInt64(int64(num))
@@ -148,7 +148,7 @@ func deserializeInt64(buffer []byte, start uint32)(uint32, types.RootType) {
     return end, value
 }
 
-func deserializeInt128(buffer []byte, start uint32)(uint32, types.RootType) {
+func deserializeInt128(buffer []byte, start uint32)(uint32, interface{}) {
     end := start + 16
     numLow := binary.LittleEndian.Uint64(buffer[start:start + 8])
     numHigh := binary.LittleEndian.Uint64(buffer[start + 8:end])
@@ -160,7 +160,7 @@ func deserializeInt128(buffer []byte, start uint32)(uint32, types.RootType) {
     return end, value
 }
 
-func deserializeInt256(buffer []byte, start uint32)(uint32, types.RootType) {
+func deserializeInt256(buffer []byte, start uint32)(uint32, interface{}) {
     end := start + 32
     
     value := types.NewInt256("0", 2)
@@ -169,7 +169,7 @@ func deserializeInt256(buffer []byte, start uint32)(uint32, types.RootType) {
     return end, value
 }
 
-func deserializeInt512(buffer []byte, start uint32)(uint32, types.RootType) {
+func deserializeInt512(buffer []byte, start uint32)(uint32, interface{}) {
     end := start + 64
     
     value := types.NewInt512("0", 2)
@@ -178,7 +178,7 @@ func deserializeInt512(buffer []byte, start uint32)(uint32, types.RootType) {
     return end, value
 }
 
-func deserializeIntVar(buffer []byte, start uint32)(uint32, types.RootType) {
+func deserializeIntVar(buffer []byte, start uint32)(uint32, interface{}) {
     length := buffer[start]
     if length > 127 {
         log.Fatal("Cannot support IntVar whose size is greater than 127 bytes.")
@@ -191,7 +191,7 @@ func deserializeIntVar(buffer []byte, start uint32)(uint32, types.RootType) {
     return end, value
 }
 
-func deserializeUInt8(buffer []byte, start uint32)(uint32, types.RootType) {
+func deserializeUInt8(buffer []byte, start uint32)(uint32, interface{}) {
     end := start + 1
     num := buffer[start]
     value := types.NewUInt8(num)
@@ -199,7 +199,7 @@ func deserializeUInt8(buffer []byte, start uint32)(uint32, types.RootType) {
     return end, value
 }
 
-func deserializeUInt16(buffer []byte, start uint32)(uint32, types.RootType) {
+func deserializeUInt16(buffer []byte, start uint32)(uint32, interface{}) {
     end := start + 2
     num := binary.LittleEndian.Uint16(buffer[start:end])
     value := types.NewUInt16(num)
@@ -207,7 +207,7 @@ func deserializeUInt16(buffer []byte, start uint32)(uint32, types.RootType) {
     return end, value
 }
 
-func deserializeUInt32(buffer []byte, start uint32)(uint32, types.RootType) {
+func deserializeUInt32(buffer []byte, start uint32)(uint32, interface{}) {
     end := start + 4
     num := binary.LittleEndian.Uint32(buffer[start:end])
     value := types.NewUInt32(num)
@@ -215,7 +215,7 @@ func deserializeUInt32(buffer []byte, start uint32)(uint32, types.RootType) {
     return end, value
 }
 
-func deserializeUInt64(buffer []byte, start uint32)(uint32, types.RootType) {
+func deserializeUInt64(buffer []byte, start uint32)(uint32, interface{}) {
     end := start + 8
     num := binary.LittleEndian.Uint64(buffer[start:end])
     value := types.NewUInt64(num)
@@ -223,7 +223,7 @@ func deserializeUInt64(buffer []byte, start uint32)(uint32, types.RootType) {
     return end, value
 }
 
-func deserializeUInt128(buffer []byte, start uint32)(uint32, types.RootType) {
+func deserializeUInt128(buffer []byte, start uint32)(uint32, interface{}) {
     end := start + 16
     numLow := binary.LittleEndian.Uint64(buffer[start:start + 8])
     numHigh := binary.LittleEndian.Uint64(buffer[start + 8:end])
@@ -235,7 +235,7 @@ func deserializeUInt128(buffer []byte, start uint32)(uint32, types.RootType) {
     return end, value
 }
 
-func deserializeUInt256(buffer []byte, start uint32)(uint32, types.RootType) {
+func deserializeUInt256(buffer []byte, start uint32)(uint32, interface{}) {
 	end := start + 32
     
     value := types.NewUInt256("0", 2)
@@ -244,7 +244,7 @@ func deserializeUInt256(buffer []byte, start uint32)(uint32, types.RootType) {
     return end, value
 }
 
-func deserializeUInt512(buffer []byte, start uint32)(uint32, types.RootType) {
+func deserializeUInt512(buffer []byte, start uint32)(uint32, interface{}) {
     end := start + 64
     
     value := types.NewUInt512("0", 2)
@@ -253,7 +253,7 @@ func deserializeUInt512(buffer []byte, start uint32)(uint32, types.RootType) {
     return end, value
 }
 
-func deserializeUIntVar(buffer []byte, start uint32)(uint32, types.RootType) {
+func deserializeUIntVar(buffer []byte, start uint32)(uint32, interface{}) {
     length := buffer[start]
     if length > 127 {
         log.Fatal("Cannot support UIntVar whose size is greater than 127 bytes.")
@@ -266,7 +266,7 @@ func deserializeUIntVar(buffer []byte, start uint32)(uint32, types.RootType) {
     return end, value
 }
 
-func deserializeFloat32(buffer []byte, start uint32)(uint32, types.RootType) {
+func deserializeFloat32(buffer []byte, start uint32)(uint32, interface{}) {
     end := start + 4
     numUint32 := binary.LittleEndian.Uint32(buffer[start:end])
     num := math.Float32frombits(numUint32)
@@ -275,7 +275,7 @@ func deserializeFloat32(buffer []byte, start uint32)(uint32, types.RootType) {
     return end, value
 }
 
-func deserializeFloat64(buffer []byte, start uint32)(uint32, types.RootType) {
+func deserializeFloat64(buffer []byte, start uint32)(uint32, interface{}) {
     end := start + 8
     numUint64 := binary.LittleEndian.Uint64(buffer[start:end])
     num := math.Float64frombits(numUint64)
@@ -284,7 +284,7 @@ func deserializeFloat64(buffer []byte, start uint32)(uint32, types.RootType) {
     return end, value
 }
 
-func deserializeString(buffer []byte, start uint32)(uint32, types.RootType) {
+func deserializeString(buffer []byte, start uint32)(uint32, interface{}) {
     length := binary.LittleEndian.Uint32(buffer[start:start + 4])
     end := start + 4 + length
     str := string(buffer[start + 4:end])
@@ -293,7 +293,7 @@ func deserializeString(buffer []byte, start uint32)(uint32, types.RootType) {
     return end, value
 }
 
-func deserializeShortString(buffer []byte, start uint32)(uint32, types.RootType) {
+func deserializeShortString(buffer []byte, start uint32)(uint32, interface{}) {
     length := binary.LittleEndian.Uint16(buffer[start:start + 2])
     end := start + 2 + uint32(length)
     str := string(buffer[start + 2:end])
@@ -302,15 +302,15 @@ func deserializeShortString(buffer []byte, start uint32)(uint32, types.RootType)
     return end, value
 }
 
-func deserializeSlice(buffer []byte, start uint32)(uint32, types.RootType) {
+func deserializeSlice(buffer []byte, start uint32)(uint32, interface{}) {
     length := binary.LittleEndian.Uint32(buffer[start:start + 4])
     start = start + 4
     end := start + length
-    slice := []types.RootType{}
+    slice := []interface{}{}
 
     for start < end {
         var subType string
-        var subData types.RootType
+        var subData interface{}
         start, subType = deserializeType(buffer, start)
         start, subData = deserializeData(subType, buffer, start)
         slice = append(slice, subData)
@@ -320,16 +320,16 @@ func deserializeSlice(buffer []byte, start uint32)(uint32, types.RootType) {
     return end, value
 }
 
-func deserializeMap(buffer []byte, start uint32)(uint32, types.RootType) {
+func deserializeMap(buffer []byte, start uint32)(uint32, interface{}) {
     length := binary.LittleEndian.Uint32(buffer[start:start + 4])
     start = start + 4
     end := start + length
-    m := map[string]types.RootType{}
+    m := map[string]interface{}{}
 
     for start < end {
         var subType string
-        var subKey types.RootType
-        var subData types.RootType
+        var subKey interface{}
+        var subData interface{}
         start, subType = deserializeType(buffer, start)
         start, subKey = deserializeShortString(buffer, start)
         start, subData = deserializeData(subType, buffer, start)
@@ -340,7 +340,7 @@ func deserializeMap(buffer []byte, start uint32)(uint32, types.RootType) {
     return end, value
 }
 
-func deserializeBinary(buffer []byte, start uint32)(uint32, types.RootType) {
+func deserializeBinary(buffer []byte, start uint32)(uint32, interface{}) {
     length := binary.LittleEndian.Uint32(buffer[start:start + 4])
     end := start + 4 + length
     bs := buffer[start + 4:end]

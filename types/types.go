@@ -1,11 +1,5 @@
 package types
 
-
-/* Root type */
-type RootType interface {
-}
-
-
 /* Type definition */
 
 type UInt8 struct {
@@ -57,11 +51,11 @@ type String struct {
 }
 
 type Slice struct {
-	slice []RootType
+	slice []interface{}
 }
 
 type Map struct {
-	m map[string]RootType
+	m map[string]interface{}
 }
 
 
@@ -115,70 +109,70 @@ func NewString(value string) *String {
     return newString(value).(*String)
 }
 
-func NewSlice(value []RootType) *Slice {
+func NewSlice(value []interface{}) *Slice {
     return newSlice(value).(*Slice)
 }
 
-func NewMap(value map[string]RootType) *Map {
+func NewMap(value map[string]interface{}) *Map {
     return newMap(value).(*Map)
 }
 
 
-/* Initialize type to RootType */
+/* Initialize type to interface{} */
 
-func newUInt8(value uint8) RootType {
+func newUInt8(value uint8) interface{} {
     return &UInt8 { value }
 }
 
-func newUInt16(value uint16) RootType {
+func newUInt16(value uint16) interface{} {
     return &UInt16 { value }
 }
 
-func newUInt32(value uint32) RootType {
+func newUInt32(value uint32) interface{} {
     return &UInt32 { value }
 }
 
-func newUInt64(value uint64) RootType {
+func newUInt64(value uint64) interface{} {
     return &UInt64 { value }
 }
 
-func newInt8(value int8) RootType {
+func newInt8(value int8) interface{} {
     return &Int8 { value }
 }
 
-func newInt16(value int16) RootType {
+func newInt16(value int16) interface{} {
     return &Int16 { value }
 }
 
-func newInt32(value int32) RootType {
+func newInt32(value int32) interface{} {
     return &Int32 { value }
 }
 
-func newInt64(value int64) RootType {
+func newInt64(value int64) interface{} {
     return &Int64 { value }
 }
 
-func newFloat32(value float32) RootType {
+func newFloat32(value float32) interface{} {
     return &Float32 { value }
 }
 
-func newFloat64(value float64) RootType {
+func newFloat64(value float64) interface{} {
     return &Float64 { value }
 }
 
-func newBool(value bool) RootType {
+func newBool(value bool) interface{} {
     return &Bool { value }
 }
 
-func newString(value string) RootType {
+func newString(value string) interface{} {
     return &String { value }
 }
 
-func newSlice(value []RootType) RootType {
+func newSlice(value []interface{}) interface{} {
     return &Slice { value }
 }
 
-func newMap(value map[string]RootType) RootType {
+func newMap(value map[string]interface{}) interface{} {
     return &Map { value }
 }
 
@@ -233,11 +227,11 @@ func (value *String) Get() string {
     return value.str
 }
 
-func (value *Slice) Get() []RootType {
+func (value *Slice) Get() []interface{} {
     return value.slice
 }
 
-func (value *Map) Get() map[string]RootType {
+func (value *Map) Get() map[string]interface{} {
     return value.m
 }
 
@@ -292,10 +286,10 @@ func (value *String) Set(newValue string) {
     value.str = newValue
 }
 
-func (value *Slice) Set(newValue []RootType) {
+func (value *Slice) Set(newValue []interface{}) {
     value.slice = newValue
 }
 
-func (value *Map) Set(newValue map[string]RootType) {
+func (value *Map) Set(newValue map[string]interface{}) {
     value.m = newValue
 }

@@ -16,7 +16,7 @@ func NewInt128(s string, base int) *Int128 {
     return newInt128(s, base).(*Int128)
 }
 
-func newInt128(s string, base int) RootType {
+func newInt128(s string, base int) interface{} {
     fmt.Println("....")
     // Empty string bad.
     if len(s) == 0 {
@@ -55,7 +55,7 @@ func ToInt128(value interface{}) *Int128 {
     return toInt128(value).(*Int128)
 }
 
-func toInt128(value interface{}) RootType {
+func toInt128(value interface{}) interface{} {
     var low uint64
     switch value.(type) {
     case int8:

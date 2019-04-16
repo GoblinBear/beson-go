@@ -14,7 +14,7 @@ func NewBinary(length int) *Binary {
     return newBinary(length).(*Binary)
 }
 
-func newBinary(length int) RootType {
+func newBinary(length int) interface{} {
     if length < 0 {
         return nil
     }

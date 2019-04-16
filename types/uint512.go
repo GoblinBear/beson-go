@@ -17,7 +17,7 @@ func NewUInt512(s string, base int) *UInt512 {
     return newUInt512(s, base).(*UInt512)
 }
 
-func newUInt512(s string, base int) RootType {
+func newUInt512(s string, base int) interface{} {
     var bs []byte
     switch base {
     case 2:
@@ -40,7 +40,7 @@ func ToUInt512(value interface{}) *UInt512 {
     return toUInt512(value).(*UInt512)
 }
 
-func toUInt512(value interface{}) RootType {
+func toUInt512(value interface{}) interface{} {
     bs := make([]byte, 64)
     switch value.(type) {
     case *UInt8:

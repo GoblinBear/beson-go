@@ -15,7 +15,7 @@ func NewInt512(s string, base int) *Int512 {
     return newInt512(s, base).(*Int512)
 }
 
-func newInt512(s string, base int) RootType {
+func newInt512(s string, base int) interface{} {
     var bs []byte
     switch base {
     case 2:
@@ -38,7 +38,7 @@ func ToInt512(value interface{}) *Int512 {
     return toInt512(value).(*Int512)
 }
 
-func toInt512(value interface{}) RootType {
+func toInt512(value interface{}) interface{} {
     bs := make([]byte, 64)
     switch value.(type) {
     case *Int8:
