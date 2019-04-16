@@ -40,23 +40,23 @@ func getType(data interface{}) string {
     }
 
     switch data.(type) {
-    case *types.Bool:
-        if data.(*types.Bool).Get() {
+    case bool:
+        if data.(bool) {
             t = DATA_TYPE["TRUE"]
         } else {
             t = DATA_TYPE["FALSE"]
         }
-    case *types.Float32:
+    case float32:
         t = DATA_TYPE["FLOAT32"]
-    case *types.Float64:
+    case float64:
         t = DATA_TYPE["FLOAT64"]
-    case *types.Int8:
+    case int8:
         t = DATA_TYPE["INT8"]
-    case *types.Int16:
+    case int16:
         t = DATA_TYPE["INT16"]
-    case *types.Int32:
+    case int32:
         t = DATA_TYPE["INT32"]
-    case *types.Int64:
+    case int64:
         t = DATA_TYPE["INT64"]
     case *types.Int128:
         t = DATA_TYPE["INT128"]
@@ -66,13 +66,14 @@ func getType(data interface{}) string {
         t = DATA_TYPE["INT512"]
     case *types.IntVar:
         t = DATA_TYPE["INTVAR"]
-    case *types.UInt8:
+    // case *types.UInt8:
+    case uint8:
         t = DATA_TYPE["UINT8"]
-    case *types.UInt16:
+    case uint16:
         t = DATA_TYPE["UINT16"]
-    case *types.UInt32:
+    case uint32:
         t = DATA_TYPE["UINT32"]
-    case *types.UInt64:
+    case uint64:
         t = DATA_TYPE["UINT64"]
     case *types.UInt128:
         t = DATA_TYPE["UINT128"]
@@ -84,11 +85,11 @@ func getType(data interface{}) string {
         t = DATA_TYPE["UINTVAR"]
     case *types.Binary:
         t = DATA_TYPE["BINARY"]
-    case *types.String:
+    case string:
         t = DATA_TYPE["STRING"]
-    case *types.Slice:
+    case []interface{}:
         t = DATA_TYPE["ARRAY"]
-    case *types.Map:
+    case map[string]interface{}:
         t = DATA_TYPE["MAP"]
     default:
         t = ""
@@ -116,16 +117,16 @@ func serializeData(t string, data interface{}) []byte {
         buffers = serializeBoolean()
     case DATA_TYPE["UINT8"]:
         buffers = make([]byte, 1)
-        buffers[0] = data.(*types.UInt8).Get()
+        buffers[0] = data.(uint8)
     case DATA_TYPE["UINT16"]:
         buffers = make([]byte, 2)
-        binary.LittleEndian.PutUint16(buffers, data.(*types.UInt16).Get())
+        binary.LittleEndian.PutUint16(buffers, data.(uint16))
     case DATA_TYPE["UINT32"]:
         buffers = make([]byte, 4)
-        binary.LittleEndian.PutUint32(buffers, data.(*types.UInt32).Get())
+        binary.LittleEndian.PutUint32(buffers, data.(uint32))
     case DATA_TYPE["UINT64"]:
         buffers = make([]byte, 8)
-        binary.LittleEndian.PutUint64(buffers, data.(*types.UInt64).Get())
+        binary.LittleEndian.PutUint64(buffers, data.(uint64))
     case DATA_TYPE["UINT128"]:
         buffers = serializeUInt128(data.(*types.UInt128))
     case DATA_TYPE["UINT256"]:
@@ -136,16 +137,16 @@ func serializeData(t string, data interface{}) []byte {
         buffers = serializeUIntVar(data.(*types.UIntVar))
     case DATA_TYPE["INT8"]:
         buffers = make([]byte, 1)
-        buffers[0] = uint8(data.(*types.Int8).Get())
+        buffers[0] = uint8(data.(int8))
     case DATA_TYPE["INT16"]:
         buffers = make([]byte, 2)
-        binary.LittleEndian.PutUint16(buffers, uint16(data.(*types.Int16).Get()))
+        binary.LittleEndian.PutUint16(buffers, uint16(data.(int16)))
     case DATA_TYPE["INT32"]:
         buffers = make([]byte, 4)
-        binary.LittleEndian.PutUint32(buffers, uint32(data.(*types.Int32).Get()))
+        binary.LittleEndian.PutUint32(buffers, uint32(data.(int32)))
     case DATA_TYPE["INT64"]:
         buffers = make([]byte, 8)
-        binary.LittleEndian.PutUint64(buffers, uint64(data.(*types.Int64).Get()))
+        binary.LittleEndian.PutUint64(buffers, uint64(data.(int64)))
     case DATA_TYPE["INT128"]:
         buffers = serializeInt128(data.(*types.Int128))
     case DATA_TYPE["INT256"]:
@@ -155,21 +156,21 @@ func serializeData(t string, data interface{}) []byte {
     case DATA_TYPE["INTVAR"]:
         buffers = serializeIntVar(data.(*types.IntVar))
     case DATA_TYPE["FLOAT32"]:
-        bits := math.Float32bits(data.(*types.Float32).Get())
+        bits := math.Float32bits(data.(float32))
         buffers = make([]byte, 4)
         binary.LittleEndian.PutUint32(buffers, bits)
     case DATA_TYPE["FLOAT64"]:
-        bits := math.Float64bits(data.(*types.Float64).Get())
+        bits := math.Float64bits(data.(float64))
         buffers = make([]byte, 8)
         binary.LittleEndian.PutUint64(buffers, bits)
     case DATA_TYPE["STRING"]:
-        s := data.(*types.String)
+        s := data.(string)
         buffers = serializeString(s)
     case DATA_TYPE["ARRAY"]:
-        slice := data.(*types.Slice)
+        slice := data.([]interface{})
         buffers = serializeSlice(slice)
     case DATA_TYPE["MAP"]:
-        m := data.(*types.Map)
+        m := data.(map[string]interface{})
         buffers = serializeMap(m)
     case DATA_TYPE["BINARY"]:
         b := data.(*types.Binary)
@@ -245,8 +246,8 @@ func serializeIntVar(value *types.IntVar) []byte {
     return buf
 }
 
-func serializeString(value *types.String) []byte {
-    str := value.Get()
+func serializeString(value string) []byte {
+    str := value
     length := len(str)
     lengthBytes := make([]byte, 4)
     binary.LittleEndian.PutUint32(lengthBytes, uint32(length))
@@ -256,8 +257,8 @@ func serializeString(value *types.String) []byte {
     return buf
 }
 
-func serializeShortString(value *types.String) []byte {
-    str := value.Get()
+func serializeShortString(value string) []byte {
+    str := value
     length := len(str)
     lengthBytes := make([]byte, 2)
     binary.LittleEndian.PutUint16(lengthBytes, uint16(length))
@@ -267,8 +268,8 @@ func serializeShortString(value *types.String) []byte {
     return buf
 }
 
-func serializeSlice(value *types.Slice) []byte {
-    slice := value.Get()
+func serializeSlice(value []interface{}) []byte {
+    slice := value
     subBytesBuffer := bytes.NewBuffer(make([]byte, 0))
     for _, element := range slice {
         subType := getType(element)
@@ -289,13 +290,12 @@ func serializeSlice(value *types.Slice) []byte {
     return buf
 }
 
-func serializeMap(value *types.Map) []byte {
+func serializeMap(value map[string]interface{}) []byte {
     subBytesBuffer := bytes.NewBuffer(make([]byte, 0))
-    m := value.Get()
+    m := value
     for key, value := range m {
         // serialize key
-        k := types.NewString(key)
-        keyBytes := serializeShortString(k)
+        keyBytes := serializeShortString(key)
 
         // serialize value
         subType := getType(value)

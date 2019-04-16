@@ -107,11 +107,11 @@ func deserializeNull(start uint32)(uint32, interface{}) {
 }
 
 func deserializeBoolean(t string, start uint32)(uint32, interface{}) {
-    var value *types.Bool
+    var value bool
     if t == DATA_TYPE["TRUE"] {
-        value = types.NewBool(true)
+        value = true
     } else {
-        value = types.NewBool(false)
+        value = false
     }
     return start, value
 }
@@ -119,7 +119,7 @@ func deserializeBoolean(t string, start uint32)(uint32, interface{}) {
 func deserializeInt8(buffer []byte, start uint32)(uint32, interface{}) {
     end := start + 1
     num := int8(buffer[start])
-    value := types.NewInt8(num)
+    value := num
 
     return end, value
 }
@@ -127,7 +127,7 @@ func deserializeInt8(buffer []byte, start uint32)(uint32, interface{}) {
 func deserializeInt16(buffer []byte, start uint32)(uint32, interface{}) {
     end := start + 2
     num := binary.LittleEndian.Uint16(buffer[start:end])
-    value := types.NewInt16(int16(num))
+    value := int16(num)
 
     return end, value
 }
@@ -135,7 +135,7 @@ func deserializeInt16(buffer []byte, start uint32)(uint32, interface{}) {
 func deserializeInt32(buffer []byte, start uint32)(uint32, interface{}) {
     end := start + 4
     num := binary.LittleEndian.Uint32(buffer[start:end])
-    value := types.NewInt32(int32(num))
+    value := int32(num)
 
     return end, value
 }
@@ -143,7 +143,7 @@ func deserializeInt32(buffer []byte, start uint32)(uint32, interface{}) {
 func deserializeInt64(buffer []byte, start uint32)(uint32, interface{}) {
     end := start + 8
     num := binary.LittleEndian.Uint64(buffer[start:end])
-    value := types.NewInt64(int64(num))
+    value := int64(num)
 
     return end, value
 }
@@ -194,7 +194,7 @@ func deserializeIntVar(buffer []byte, start uint32)(uint32, interface{}) {
 func deserializeUInt8(buffer []byte, start uint32)(uint32, interface{}) {
     end := start + 1
     num := buffer[start]
-    value := types.NewUInt8(num)
+    value := num
 
     return end, value
 }
@@ -202,7 +202,7 @@ func deserializeUInt8(buffer []byte, start uint32)(uint32, interface{}) {
 func deserializeUInt16(buffer []byte, start uint32)(uint32, interface{}) {
     end := start + 2
     num := binary.LittleEndian.Uint16(buffer[start:end])
-    value := types.NewUInt16(num)
+    value := num
 
     return end, value
 }
@@ -210,7 +210,7 @@ func deserializeUInt16(buffer []byte, start uint32)(uint32, interface{}) {
 func deserializeUInt32(buffer []byte, start uint32)(uint32, interface{}) {
     end := start + 4
     num := binary.LittleEndian.Uint32(buffer[start:end])
-    value := types.NewUInt32(num)
+    value := num
 
     return end, value
 }
@@ -218,7 +218,7 @@ func deserializeUInt32(buffer []byte, start uint32)(uint32, interface{}) {
 func deserializeUInt64(buffer []byte, start uint32)(uint32, interface{}) {
     end := start + 8
     num := binary.LittleEndian.Uint64(buffer[start:end])
-    value := types.NewUInt64(num)
+    value := num
 
     return end, value
 }
@@ -270,7 +270,7 @@ func deserializeFloat32(buffer []byte, start uint32)(uint32, interface{}) {
     end := start + 4
     numUint32 := binary.LittleEndian.Uint32(buffer[start:end])
     num := math.Float32frombits(numUint32)
-    value := types.NewFloat32(num)
+    value := num
 
     return end, value
 }
@@ -279,7 +279,7 @@ func deserializeFloat64(buffer []byte, start uint32)(uint32, interface{}) {
     end := start + 8
     numUint64 := binary.LittleEndian.Uint64(buffer[start:end])
     num := math.Float64frombits(numUint64)
-    value := types.NewFloat64(num)
+    value := num
 
     return end, value
 }
@@ -288,7 +288,7 @@ func deserializeString(buffer []byte, start uint32)(uint32, interface{}) {
     length := binary.LittleEndian.Uint32(buffer[start:start + 4])
     end := start + 4 + length
     str := string(buffer[start + 4:end])
-    value := types.NewString(str)
+    value := str
 
     return end, value
 }
@@ -297,7 +297,7 @@ func deserializeShortString(buffer []byte, start uint32)(uint32, interface{}) {
     length := binary.LittleEndian.Uint16(buffer[start:start + 2])
     end := start + 2 + uint32(length)
     str := string(buffer[start + 2:end])
-    value := types.NewString(str)
+    value := str
 
     return end, value
 }
@@ -316,7 +316,7 @@ func deserializeSlice(buffer []byte, start uint32)(uint32, interface{}) {
         slice = append(slice, subData)
     }
 
-    value := types.NewSlice(slice)
+    value := slice
     return end, value
 }
 
@@ -333,10 +333,10 @@ func deserializeMap(buffer []byte, start uint32)(uint32, interface{}) {
         start, subType = deserializeType(buffer, start)
         start, subKey = deserializeShortString(buffer, start)
         start, subData = deserializeData(subType, buffer, start)
-        m[subKey.(*types.String).Get()] = subData
+        m[subKey.(string)] = subData
     }
 
-    value := types.NewMap(m)
+    value := m
     return end, value
 }
 

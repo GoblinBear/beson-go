@@ -41,26 +41,26 @@ func ToIntVar(value interface{}, size int) *IntVar {
 func toIntVar(value interface{}, size int) interface{} {
     bs := make([]byte, size)
     switch value.(type) {
-    case *Int8:
-        v := byte(value.(*Int8).Get())
+    case int8:
+        v := byte(value.(int8))
         if helper.IsNegative([]byte{ v }) {
             helper.PaddingOne(bs)
         }
         bs[0] = v
-    case *Int16:
-        v := uint16(value.(*Int16).Get())
+    case int16:
+        v := uint16(value.(int16))
         if v & 0x8000 > 0 {
             helper.PaddingOne(bs)
         }
         binary.LittleEndian.PutUint16(bs, v)
-    case *Int32:
-        v := uint32(value.(*Int32).Get())
+    case int32:
+        v := uint32(value.(int32))
         if v & 0x80000000 > 0 {
             helper.PaddingOne(bs)
         }
         binary.LittleEndian.PutUint32(bs, v)
-    case *Int64:
-        v := uint64(value.(*Int64).Get())
+    case int64:
+        v := uint64(value.(int64))
         if v & 0x8000000000000000 > 0 {
             helper.PaddingOne(bs)
         }

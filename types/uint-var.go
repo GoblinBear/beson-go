@@ -41,14 +41,14 @@ func ToUIntVar(value interface{}, size int) *UIntVar {
 func toUIntVar(value interface{}, size int) interface{} {
     bs := make([]byte, size)
     switch value.(type) {
-    case *UInt8:
-        bs[0] = value.(*UInt8).Get()
-    case *UInt16:
-        binary.LittleEndian.PutUint16(bs, value.(*UInt16).Get())
-    case *UInt32:
-        binary.LittleEndian.PutUint32(bs, value.(*UInt32).Get())
-    case *UInt64:
-        binary.LittleEndian.PutUint64(bs, value.(*UInt64).Get())
+    case uint8:
+        bs[0] = value.(uint8)
+    case uint16:
+        binary.LittleEndian.PutUint16(bs, value.(uint16))
+    case uint32:
+        binary.LittleEndian.PutUint32(bs, value.(uint32))
+    case uint64:
+        binary.LittleEndian.PutUint64(bs, value.(uint64))
     case *UInt128:
         binary.LittleEndian.PutUint64(bs[:8], value.(*UInt128).Low())
         binary.LittleEndian.PutUint64(bs[8:16], value.(*UInt128).High())

@@ -59,13 +59,13 @@ func toInt128(value interface{}) interface{} {
     var low uint64
     switch value.(type) {
     case int8:
-        low = uint64(value.(*Int8).Get())
+        low = uint64(value.(int8))
     case int16:
-        low = uint64(value.(*Int16).Get())
+        low = uint64(value.(int16))
     case int32:
-        low = uint64(value.(*Int32).Get())
+        low = uint64(value.(int32))
     case int64:
-        low = uint64(value.(*Int64).Get())
+        low = uint64(value.(int64))
     default:
         return nil
     }
