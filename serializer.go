@@ -7,7 +7,7 @@ import (
     "math"
     "strings"
 
-    "beson/types"
+    "github.com/GoblinBear/beson/types"
 )
 
 // Serialize convert common type data to binary sequence.
