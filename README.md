@@ -4,7 +4,7 @@
 
 BESON, short for Binary Extended JSON. Beson library is similar to BSON format used in mongodb. The major difference between beson and bson is that beson allows primitive data to be encoded directly. Beson is designed to transfer or store data in a binary format, not specialized for database storage.
 
-![](https://i.imgur.com/Lyj3Fbn.png)
+![](https://i.imgur.com/bbBhVCR.png)
 
 ## Table of Contents
 
@@ -89,19 +89,15 @@ package main
 import (
     "fmt"
     beson "github.com/GoblinBear/beson-go"
-    "github.com/GoblinBear/beson-go/types"
 )
 
 func main() {
-    v := types.NewUInt32(2568)
-    fmt.Println(v)
-
+    var v uint32 = 2568
     ser := beson.Serialize(v)
     fmt.Println(ser)
 }
 ```
 ```shell
-&{2568}
 [3 0 8 10 0 0]
 ```
 
@@ -117,7 +113,7 @@ import (
 )
 
 func main() {
-    v := types.NewUInt32(2568)
+    var v uint32 = 2568
     ser := beson.Serialize(v)
 
     anchor, data := beson.Deserialize(ser, 0)
@@ -126,9 +122,11 @@ func main() {
 }
 ```
 ```shell
-&{2568}
-6
+data = 2568
+anchor = 6
 ```
+- `data`：Source data.
+- `anchor`：The location of next encoded data.
 
 ## Usage
 
