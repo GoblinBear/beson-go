@@ -66,7 +66,6 @@ func getType(data interface{}) string {
         t = DATA_TYPE["INT512"]
     case *types.IntVar:
         t = DATA_TYPE["INTVAR"]
-    // case *types.UInt8:
     case uint8:
         t = DATA_TYPE["UINT8"]
     case uint16:
