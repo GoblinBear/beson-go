@@ -4,7 +4,7 @@ import (
     "encoding/binary"
     "errors"
 
-    "beson/helper"
+    "github.com/GoblinBear/beson/helper"
 )
 
 type Int256 struct {

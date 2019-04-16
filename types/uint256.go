@@ -4,7 +4,7 @@ import (
     "encoding/binary"
     "errors"
 
-    "beson/helper"
+    "github.com/GoblinBear/beson/helper"
 )
 
 const BYTE_LENGTH_256 int = 32
