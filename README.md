@@ -120,14 +120,14 @@ func main() {
     v := types.NewUInt32(2568)
     ser := beson.Serialize(v)
 
-    data, anchor := beson.Deserialize(ser, 0)
+    anchor, data := beson.Deserialize(ser, 0)
     fmt.Println(data)
     fmt.Println(anchor)
 }
 ```
 ```shell
-6
 &{2568}
+6
 ```
 
 ## Usage

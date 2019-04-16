@@ -7,37 +7,37 @@ import (
     "beson/types"
 )
 
-var originData = map[string]types.RootType {
+var originData = map[string]interface{} {
     "NULL":     nil,
-    "TRUE":     types.NewBool(true),
-    "FALSE":    types.NewBool(false),
-    "UINT8":    types.NewUInt8(2),
-    "UINT16":   types.NewUInt16(2),
-    "UINT32":   types.NewUInt32(2),
-    "UINT64":   types.NewUInt64(2),
+    "TRUE":     true,
+    "FALSE":    false,
+    "UINT8":    uint8(2),
+    "UINT16":   uint16(2),
+    "UINT32":   uint32(2),
+    "UINT64":   uint64(2),
     "UINT128":  types.NewUInt128("2", 10),
     "UINT256":  types.NewUInt256("2", 10),
     "UINT512":  types.NewUInt512("2", 10),
     "UINTVAR":  types.NewUIntVar("2", 10, 8),
-    "INT8":     types.NewInt8(-3),
-    "INT16":    types.NewInt16(-3),
-    "INT32":    types.NewInt32(-3),
-    "INT64":    types.NewInt64(-3),
+    "INT8":     int8(-3),
+    "INT16":    int16(-3),
+    "INT32":    int32(-3),
+    "INT64":    int64(-3),
     "INT128":   types.NewInt128("-3", 10),
     "INT256":   types.NewInt256("-3", 10),
     "INT512":   types.NewInt512("-3", 10),
     "INTVAR":   types.NewIntVar("-3", 10, 8),
-    "FLOAT32":  types.NewFloat32(0.456),
-    "FLOAT64":  types.NewFloat64(0.456),
-    "STRING":   types.NewString("Hello world"),
-    "ARRAY":    types.NewSlice([]types.RootType { 
-        types.NewFloat32(0.456),
-        types.NewInt32(-3),
-    }),
-    "MAP":      types.NewMap(map[string]types.RootType { 
-        "apple":    types.NewUInt8(2),
-        "banana":   types.NewBool(false),
-    }),
+    "FLOAT32":  float32(0.456),
+    "FLOAT64":  float64(0.456),
+    "STRING":   "Hello world",
+    "ARRAY":    []interface{} { 
+        float32(0.456),
+        int32(-3),
+    },
+    "MAP":      map[string]interface{} { 
+        "apple":    uint8(2),
+        "banana":   false,
+    },
     "BINARY":   types.NewBinary(0).FromHex("0x2564877"),
 }
 
