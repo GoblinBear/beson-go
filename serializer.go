@@ -340,3 +340,4 @@ func concatBytesArray(b1 []byte, b2 ...[]byte) []byte {
 
     return newBytes
 }
+
